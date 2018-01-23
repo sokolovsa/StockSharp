@@ -51,7 +51,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ecng.Localization">
-      <HintPath>..\..\..\References\Ecng.Localization.dll</HintPath>
+      <HintPath>z:\ss\bin\ecng\_ref\Ecng.Localization.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
