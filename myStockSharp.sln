@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessEntities", "BusinessEntities\BusinessEntities.csproj", "{DCE69DB8-53CA-4B7F-9368-02F175A31074}"
 EndProject
@@ -22,6 +21,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplePerformancePublic", "Samples\Chart\SamplePerformance\SamplePerformancePublic.csproj", "{81A84C3B-EC88-4746-AA4D-247DD1F66EB6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community", "Community\Community.csproj", "{E8E18F8F-97BD-41AE-8888-F54F2411D575}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleRequestMoreData", "..\..\src\ss\ss\Samples\Chart\SampleRequestMoreData\SampleRequestMoreData.csproj", "{D4226215-090D-4F2F-9D56-02ED30AEA50C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,8 +70,15 @@ Global
 		{E8E18F8F-97BD-41AE-8888-F54F2411D575}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8E18F8F-97BD-41AE-8888-F54F2411D575}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8E18F8F-97BD-41AE-8888-F54F2411D575}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4226215-090D-4F2F-9D56-02ED30AEA50C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4226215-090D-4F2F-9D56-02ED30AEA50C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4226215-090D-4F2F-9D56-02ED30AEA50C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4226215-090D-4F2F-9D56-02ED30AEA50C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {95F559AD-98FF-42EB-9922-FD47CD4C5DF8}
 	EndGlobalSection
 EndGlobal
