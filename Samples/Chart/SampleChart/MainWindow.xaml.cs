@@ -129,6 +129,8 @@ namespace SampleChart
 			Chart.Draw(chartData);
 
 			_indicators.Add(element, indicator);
+
+			CustomColors_Changed(null, null);
 		}
 
 		private void Chart_OnUnSubscribeElement(IChartElement element)
@@ -395,7 +397,7 @@ namespace SampleChart
 
 			var dd = new ChartDrawData();
 
-			if (((CheckBox) sender).IsChecked == true)
+			if (_checkCustomColors.IsChecked == true)
 			{
 				dd.SetCustomColorer(_candleElement, (dt, isUpCandle, isLastCandle) => dt.Hour % 2 != 0 ? null : (isUpCandle ? (Color?)Colors.Chartreuse : Colors.Aqua));
 				_indicators.Keys.ForEach(el => dd.SetCustomColorer(el, (dt) => dt.Hour % 2 != 0 ? null : (Color?)Colors.Magenta));
