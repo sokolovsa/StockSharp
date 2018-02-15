@@ -13,6 +13,7 @@ Created: 2015, 12, 2, 8:18 PM
 Copyright 2010 by StockSharp, LLC
 *******************************************************************************************/
 #endregion S# License
+
 namespace SampleChart
 {
 	using System;
@@ -21,6 +22,7 @@ namespace SampleChart
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Threading;
+	using System.Windows.Media;
 
 	using DevExpress.Xpf.Core;
 
@@ -382,6 +384,25 @@ namespace SampleChart
 		private void Securities_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			Draw.IsEnabled = Securities.SelectedItem != null;
+		}
+
+		private void CustomColors_Changed(object sender, RoutedEventArgs e)
+		{
+			if(_candleElement == null)
+				return;
+
+			var dd = new ChartDrawData();
+
+			if (((CheckBox) sender).IsChecked == true)
+			{
+				dd.SetCustomColorer(_candleElement, (dt, isUpCandle, isLastCandle) => dt.Hour % 2 != 0 ? null : (isUpCandle ? (Color?)Colors.Chartreuse : Colors.Aqua));
+			}
+			else
+			{
+				dd.SetCustomColorer(_candleElement, null);
+			}
+
+			Chart.Draw(dd);
 		}
 	}
 }
