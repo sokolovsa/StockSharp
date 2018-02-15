@@ -14,6 +14,8 @@ Copyright 2010 by StockSharp, LLC
 *******************************************************************************************/
 #endregion S# License
 
+using MoreLinq;
+
 namespace SampleChart
 {
 	using System;
@@ -396,10 +398,12 @@ namespace SampleChart
 			if (((CheckBox) sender).IsChecked == true)
 			{
 				dd.SetCustomColorer(_candleElement, (dt, isUpCandle, isLastCandle) => dt.Hour % 2 != 0 ? null : (isUpCandle ? (Color?)Colors.Chartreuse : Colors.Aqua));
+				_indicators.Keys.ForEach(el => dd.SetCustomColorer(el, (dt) => dt.Hour % 2 != 0 ? null : (Color?)Colors.Magenta));
 			}
 			else
 			{
 				dd.SetCustomColorer(_candleElement, null);
+				_indicators.Keys.ForEach(el => dd.SetCustomColorer(el, null));
 			}
 
 			Chart.Draw(dd);
