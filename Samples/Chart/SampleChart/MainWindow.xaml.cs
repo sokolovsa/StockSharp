@@ -53,7 +53,7 @@ namespace SampleChart
 		private TimeFrameCandle _candle;
 		private CandleMessageVolumeProfile _volumeProfile;
 		private readonly DispatcherTimer _chartUpdateTimer = new DispatcherTimer();
-		private readonly SynchronizedDictionary<DateTimeOffset, TimeFrameCandle> _updatedCandles = new SynchronizedDictionary<DateTimeOffset, TimeFrameCandle>();
+		private readonly SynchronizedDictionary<DateTimeOffset, Tuple<TimeFrameCandle, bool>> _updatedCandles = new SynchronizedDictionary<DateTimeOffset, Tuple<TimeFrameCandle, bool>>();
 		private readonly CachedSynchronizedList<TimeFrameCandle> _allCandles = new CachedSynchronizedList<TimeFrameCandle>();
 		private decimal _lastPrice;
 		//private const decimal _priceStep = 10m;
@@ -72,7 +72,7 @@ namespace SampleChart
 
 			Loaded += OnLoaded;
 
-			_chartUpdateTimer.Interval = TimeSpan.FromMilliseconds(100);
+			_chartUpdateTimer.Interval = TimeSpan.FromMilliseconds(1);
 			_chartUpdateTimer.Tick += ChartUpdateTimerOnTick;
 			_chartUpdateTimer.Start();
 
@@ -162,7 +162,7 @@ namespace SampleChart
 			{
 				Id = id.ToStringId(),
 				PriceStep = id.SecurityCode.StartsWith("RI", StringComparison.InvariantCultureIgnoreCase) ? 10 : 0.01m,
-				Board = _exchangeInfoProvider.GetExchangeBoard(id.BoardCode) ?? ExchangeBoard.Associated
+				Board = ExchangeBoard.Associated
 			};
 
 			_tradeGenerator = new RandomWalkTradeGenerator(id);
@@ -233,8 +233,10 @@ namespace SampleChart
 				{
 					foreach (var candle in storage.GetCandleStorage(typeof(TimeFrameCandle), security, _timeframe, new LocalMarketDataDrive(path), format).Load())
 					{
-						lock (_updatedCandles.SyncRoot)
-							_updatedCandles[candle.OpenTime] = _candle = (TimeFrameCandle)candle;
+						lock(_updatedCandles.SyncRoot) {
+							_candle = (TimeFrameCandle)candle;
+							_updatedCandles[candle.OpenTime] = Tuple.Create(_candle, true);
+						}
 
 						_lastTime = candle.OpenTime + _timeframe;
 						_lastPrice = _candle.ClosePrice;
@@ -291,7 +293,7 @@ namespace SampleChart
 				_lastTime += TimeSpan.FromSeconds(10);
 			}
 
-			TimeFrameCandle[] candlesToUpdate;
+			Tuple<TimeFrameCandle, bool>[] candlesToUpdate;
 			lock (_updatedCandles.SyncRoot)
 			{
 				candlesToUpdate = _updatedCandles.OrderBy(p => p.Key).Select(p => p.Value).ToArray();
@@ -299,18 +301,25 @@ namespace SampleChart
 			}
 
 			var lastCandle = _allCandles.LastOrDefault();
-			_allCandles.AddRange(candlesToUpdate.Where(c => lastCandle == null || c.OpenTime != lastCandle.OpenTime));
+			_allCandles.AddRange(candlesToUpdate.Where(c => lastCandle == null || c.Item1.OpenTime != lastCandle.OpenTime).Select(t => t.Item1));
 
 			ChartDrawData chartData = null;
 
-			foreach (var candle in candlesToUpdate)
+			foreach (var tuple in candlesToUpdate)
 			{
+				var candle = tuple.Item1;
+				var needToFinish = tuple.Item2;
+
 				if (chartData == null)
 					chartData = new ChartDrawData();
 
+				if(needToFinish)
+					candle.State = CandleStates.Finished;
+
 				var chartGroup = chartData.Group(candle.OpenTime);
 
-				chartGroup.Add(_candleElement, candle);
+				lock(candle.PriceLevels)
+					chartGroup.Add(_candleElement, candle);
 
 				foreach (var pair in _indicators.CachedPairs)
 				{
@@ -331,16 +340,13 @@ namespace SampleChart
 			{
 				if (_candle != null)
 				{
-					_candle.State = CandleStates.Finished;
-
 					lock (_updatedCandles.SyncRoot)
-						_updatedCandles[_candle.OpenTime] = _candle;
+						_updatedCandles[_candle.OpenTime] = Tuple.Create(_candle, true);
 
 					_lastPrice = _candle.ClosePrice;
 					_tradeGenerator.Process(tick);
 				}
 
-				//var t = TimeframeSegmentDataSeries.GetTimeframePeriod(time.DateTime, _timeframe);
 				var bounds = _timeframe.GetCandleBounds(time, security.Board);
 
 				_candle = new TimeFrameCandle
@@ -370,10 +376,11 @@ namespace SampleChart
 
 			_candle.TotalVolume += tick.TradeVolume.Value;
 
-			_volumeProfile.Update(tick.TradePrice.Value, tick.TradeVolume, tick.OriginSide);
+			lock(_volumeProfile.PriceLevels)
+				_volumeProfile.Update(tick.TradePrice.Value, tick.TradeVolume, tick.OriginSide);
 
 			lock (_updatedCandles.SyncRoot)
-				_updatedCandles[_candle.OpenTime] = _candle;
+				_updatedCandles[_candle.OpenTime] = Tuple.Create(_candle, false);
 		}
 
 		private void Error(string msg)
