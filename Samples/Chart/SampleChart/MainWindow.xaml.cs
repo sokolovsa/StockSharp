@@ -406,8 +406,8 @@ namespace SampleChart
 
 			if (_checkCustomColors.IsChecked == true)
 			{
-				dd.SetCustomColorer(_candleElement, (dt, isUpCandle, isLastCandle) => dt.Hour % 2 != 0 ? null : (isUpCandle ? (Color?)Colors.Chartreuse : Colors.Aqua));
-				_indicators.Keys.ForEach(el => dd.SetCustomColorer(el, (dt) => dt.Hour % 2 != 0 ? null : (Color?)Colors.Magenta));
+				dd.SetCustomColorer(_candleElement, (dto, isUpCandle, isLastCandle) => dto.Hour % 2 != 0 ? null : (isUpCandle ? (Color?)Colors.Chartreuse : Colors.Aqua));
+				_indicators.Keys.ForEach(el => dd.SetCustomColorer(el, dto => dto.Hour % 2 != 0 ? null : (Color?)Colors.Magenta));
 			}
 			else
 			{
