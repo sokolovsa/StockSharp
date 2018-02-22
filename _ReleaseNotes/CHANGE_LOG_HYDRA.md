@@ -1,5 +1,31 @@
 StockSharp Data (Hydra) Change log
 ========================
+## v4.4.5.2:
+* (feature) Do not store empty Level1 and Pos change messages.
+* (feature) Transaq. Logging settings.
+* (feature) Connectors plugin. Heartbeat interval option.
+* (feature) OrderLog. Security column added.
+* (bug) Crypto connectors fixes.
+
+## v4.4.5.1:
+* (bug) PropertyGrid. Fix SecureString editor.
+* (feature) Importing securities. More fields.
+* (feature) Importing. Enum fields has default mapping.
+* (feature) Importing. Field order.
+* (bug) Csv importing. Fix quoted lines parsing.
+* (feature) BitStamp. ClientId. int->string http://stocksharp.ru/posts/m/42535/
+* (bug) Kraken. FIX NRE, ticks subscription.
+* (bug) InteractiveBrokers. Greenwich time zone parsing fix.
+
+## v4.4.5:
+* (feature) Bitfinex, Coinbase, Kraken, Poloniex, GDAX, Bittrex, Bithumb, HitBTC, OKCoin, Coincheck connectors.
+* (feature) Show ALL checked for security lookup window.
+* (feature) Check volume step.
+* (bug) InteractiveBrokers. Resubscribe fix.
+* (bug) Fix data bounds.
+* (bug) Fix chart drawing stop while error occurred.
+* (feature) Envelope painter.
+
 ## v4.4.3:
 * (bug) FIX server. Fix security lookup. http://stocksharp.ru/forum/8874/problemy-podklyucheniya-k-hydra-cherez-fix-/
 * (bug) Level1 binary storage. Fixes.

@@ -23,7 +23,7 @@ namespace StockSharp.Algo
 
 			public int Subscribers { get; set; }
 
-			public bool AlreadySubscribed { get; set; }
+			public bool IsSubscribed { get; set; }
 
 			public SubscriptionInfo(MarketDataMessage message)
 			{
@@ -168,6 +168,12 @@ namespace StockSharp.Algo
 		/// <param name="message">The message.</param>
 		protected override void OnInnerAdapterNewOutMessage(Message message)
 		{
+			if (message.IsBack)
+			{
+				base.OnInnerAdapterNewOutMessage(message);
+				return;
+			}
+
 			List<Message> messages = null;
 
 			switch (message.Type)
@@ -198,8 +204,12 @@ namespace StockSharp.Algo
 				}
 
 				case MessageTypes.MarketData:
-					ProcessOutMarketDataMessage((MarketDataMessage)message);
+				{
+					if (ProcessOutMarketDataMessage((MarketDataMessage)message))
+						return;
+					
 					break;
+				}
 			}
 
 			base.OnInnerAdapterNewOutMessage(message);
@@ -237,14 +247,12 @@ namespace StockSharp.Algo
 
 			lock (_sync)
 			{
-				var isSubscribe = message.IsSubscribe;
-
 				switch (message.DataType)
 				{
 					case MarketDataTypes.News:
 					{
 						var key = message.NewsId ?? string.Empty;
-						info = ProcessSubscription(_newsSubscribers, key, message, isSubscribe, ref sendIn, ref sendOutMsg);
+						info = ProcessSubscription(_newsSubscribers, key, message, ref sendIn, ref sendOutMsg);
 						break;
 					}
 					case MarketDataTypes.CandleTimeFrame:
@@ -255,13 +263,13 @@ namespace StockSharp.Algo
 					case MarketDataTypes.CandleVolume:
 					{
 						var key = Tuple.Create(message.DataType, secIdKey, message.Arg);
-						info = ProcessSubscription(_candleSubscribers, key, message, isSubscribe, ref sendIn, ref sendOutMsg);
+						info = ProcessSubscription(_candleSubscribers, key, message, ref sendIn, ref sendOutMsg);
 						break;
 					}
 					default:
 					{
 						var key = message.CreateKey(secIdKey);
-						info = ProcessSubscription(_subscribers, key, message, isSubscribe, ref sendIn, ref sendOutMsg);
+						info = ProcessSubscription(_subscribers, key, message, ref sendIn, ref sendOutMsg);
 						break;
 					}
 				}
@@ -279,7 +287,7 @@ namespace StockSharp.Algo
 				RaiseNewOutMessage(sendOutMsg);
 		}
 
-		private void ProcessOutMarketDataMessage(MarketDataMessage message)
+		private bool ProcessOutMarketDataMessage(MarketDataMessage message)
 		{
 			var secIdKey = IsSupportSubscriptionBySecurity ? message.SecurityId : default(SecurityId);
 
@@ -290,8 +298,7 @@ namespace StockSharp.Algo
 					case MarketDataTypes.News:
 					{
 						var key = message.NewsId ?? string.Empty;
-						ProcessSubscriptionResult(_newsSubscribers, key, message);
-						break;
+						return ProcessSubscriptionResult(_newsSubscribers, key, message);
 					}
 					case MarketDataTypes.CandleTimeFrame:
 					case MarketDataTypes.CandleRange:
@@ -301,35 +308,34 @@ namespace StockSharp.Algo
 					case MarketDataTypes.CandleVolume:
 					{
 						var key = Tuple.Create(message.DataType, secIdKey, message.Arg);
-						ProcessSubscriptionResult(_candleSubscribers, key, message);
-						break;
+						return ProcessSubscriptionResult(_candleSubscribers, key, message);
 					}
 					default:
 					{
 						var key = message.CreateKey(secIdKey);
-						ProcessSubscriptionResult(_subscribers, key, message);
-						break;
+						return ProcessSubscriptionResult(_subscribers, key, message);
 					}
 				}
 			}
 		}
 
-		private void ProcessSubscriptionResult<T>(Dictionary<T, SubscriptionInfo> subscriptions, T key, MarketDataMessage message)
+		private bool ProcessSubscriptionResult<T>(Dictionary<T, SubscriptionInfo> subscriptions, T key, MarketDataMessage message)
 		{
-			var isSubscribe = message.IsSubscribe;
-			var removeInfo = !isSubscribe || message.Error != null;
 			var info = subscriptions.TryGetValue(key);
 
 			if (info == null)
-				return;
+				return false;
 
-			info.AlreadySubscribed = isSubscribe && message.Error == null;
+			var isSubscribe = message.IsSubscribe;
+			var removeInfo = !isSubscribe || message.Error != null;
 
-			foreach (var marketDataMessage in info.Subscriptions)
+			info.IsSubscribed = isSubscribe && message.Error == null;
+
+			foreach (var subscription in info.Subscriptions)
 			{
-				var reply = (MarketDataMessage)marketDataMessage.Clone();
-				reply.OriginalTransactionId = marketDataMessage.TransactionId;
-				reply.TransactionId = message.TransactionId;
+				var reply = (MarketDataMessage)subscription.Clone();
+				reply.OriginalTransactionId = subscription.TransactionId;
+				//reply.TransactionId = message.TransactionId;
 				reply.Error = message.Error;
 
 				base.OnInnerAdapterNewOutMessage(reply);
@@ -337,12 +343,16 @@ namespace StockSharp.Algo
 
 			if (removeInfo)
 				subscriptions.Remove(key);
+
+			return true;
 		}
 
-		private static SubscriptionInfo ProcessSubscription<T>(Dictionary<T, SubscriptionInfo> subscriptions, T key, MarketDataMessage message, bool isSubscribe, ref bool sendIn, ref MarketDataMessage sendOutMsg)
+		private static SubscriptionInfo ProcessSubscription<T>(Dictionary<T, SubscriptionInfo> subscriptions, T key, MarketDataMessage message, ref bool sendIn, ref MarketDataMessage sendOutMsg)
 		{
-			var info = subscriptions.TryGetValue(key) ?? new SubscriptionInfo((MarketDataMessage)message.Clone());
+			MarketDataMessage clone = null;
+			var info = subscriptions.TryGetValue(key) ?? new SubscriptionInfo(clone = (MarketDataMessage)message.Clone());
 			var subscribersCount = info.Subscribers;
+			var isSubscribe = message.IsSubscribe;
 
 			if (isSubscribe)
 			{
@@ -363,10 +373,10 @@ namespace StockSharp.Algo
 			if (sendOutMsg != null)
 				return info;
 
-			if (info.Message != message)
-				info.Subscriptions.Add(message);
+			//if (isSubscribe)
+			info.Subscriptions.Add(clone ?? (MarketDataMessage)message.Clone());
 
-			if (!sendIn && info.AlreadySubscribed)
+			if (!sendIn && info.IsSubscribed)
 			{
 				sendOutMsg = new MarketDataMessage
 				{

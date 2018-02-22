@@ -1,12 +1,56 @@
 StockSharp API Change log
 ========================
 ## current:
+* (feature) OrderLossMoreRule.
+* (feature) KrakenMessageAdapter.IsMarginEnabled.
+* (feature) LogManager. Save/Load Application settings.
+
+## v4.4.5.2:
+* (bug) OrderProfitMoreRule fix.
+* (bug) Change milliseconds for TimeSpanEditor fixes.
+* (feature) SampleGdax. OrderLogWindow.
+* (bug) CandleHelper.ToTrades fix.
+* (feature) SampleBitfinex. OrderLogWindow.
+* (feature) OrderLogGrid. Security column added.
+* (feature) Connectors. DefaultHeartbeatInterval
+* (bug) Crypto connectors fixes.
+
+## v4.4.5.1:
+* (bug) PropertyGrid. Fix SecureString editor.
+* (feature) Importing securities. More fields.
+* (feature) Importing. Enum fields has default mapping.
+* (feature) Importing. Field order.
+* (feature) FIX server. Support market data response messages.
+* (bug) QuikLua. Market data response support. Fix http://stocksharp.ru/forum/9072/tikovye-svechi-v-mesto-kastomnogo-taimfreima/
+* (bug) InteractiveBrokers. Expiry date parse fix.
+* (bug) Samples for crypto. Retargeted to 4.6.
+* (feature) CsvParser. Support quotes.
+* (feature) Configuration. Try/catch missed adapter's files.
+* (feature) FillDefaultCryptoFields.
+* (bug) Fix Samples.sln
+* (bug) Fix missed DevExpress files http://stocksharp.ru/forum/9095/tehpodderzhka-biblioteka-devexpresspdfv172core/
+* (feature) BitStamp. ClientId. int->string http://stocksharp.ru/posts/m/42535/
+* (bug) BitStamp. Fix http://stocksharp.ru/posts/m/42474/
+* (bug) Kraken. FIX NRE, ticks subscription.
+* (bug) InteractiveBrokers. Greenwich time zone parsing fix.
+* (bug) ProxyEditorWindow. Fix for non BaseApplication apps.
+
+## v4.4.5:
+* (feature) Bitfinex, Coinbase, Kraken, Poloniex, GDAX, Bittrex, Bithumb, HitBTC, OKCoin, Coincheck connectors.
 * (bug) Charting. Envelope indicator rendering fix.
 * (feature) Charting. Painters lookup refactoring.
 * (feature) Quik. Removed obsolete QuikOrderConditionResults.
 * (bug) OrderRegMsg.TillDate usage fix.
 * (bug) InteractiveBrokers. Resubscribe fix.
 * (feature) Bitfinex, Coinbase, Kraken, Poloniex, GDAX, Bittrex, Bithumb, HitBTC, OKCoin, Coincheck connectors.
+* (bug) BasketMessageAdapter. Fix subscription for not yet connected adapters.
+* (feature) WEX (BTCE). Pusher support.
+* (bug) OrderLogGrid. Binding fix for TIF and Expiry date.
+* (bug) Bitstamp fixes.
+* (bug) MarketDataMessage. Do not set From value for real-time subscriptions.
+* (feature) PortfolioMessage. Removed State property.
+* (feature) MarketRuleHelper. OrderProfitMoreRule.
+* (feature) QuotesBinarySnapshotSerializer. MaxDepth property.
 
 ## v4.4.4:
 * (feature) IPositionProvider interface added.

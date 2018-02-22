@@ -26,6 +26,8 @@ namespace StockSharp.Algo
 
 	using StockSharp.Algo.Candles;
 	using StockSharp.BusinessEntities;
+	using StockSharp.Localization;
+	using StockSharp.Logging;
 	using StockSharp.Messages;
 
 	partial class Connector
@@ -67,12 +69,29 @@ namespace StockSharp.Algo
 
 			public IEnumerable<Portfolio> RegisteredPortfolios => _registeredPortfolios.Cache;
 
-			public void SubscribeUnSubscribe(Security security, MarketDataMessage message)
+			public void ProcessRequest(Security security, MarketDataMessage message, bool tryAdd)
 			{
 				if (security == null)
 					throw new ArgumentNullException(nameof(security));
 
-				_pendingSubscriptions.Add(message.TransactionId, Tuple.Create((MarketDataMessage)message.Clone(), security));
+				if (message == null)
+					throw new ArgumentNullException(nameof(message));
+
+				if (message.TransactionId == 0)
+					message.TransactionId = _connector.TransactionIdGenerator.GetNextId();
+
+				message.FillSecurityInfo(_connector, security);
+
+				var value = Tuple.Create((MarketDataMessage)message.Clone(), security);
+
+				if (tryAdd)
+				{
+					// if the message was looped back via IsBack=true
+					_pendingSubscriptions.TryAdd(message.TransactionId, value);
+				}
+				else
+					_pendingSubscriptions.Add(message.TransactionId, value);
+
 				_connector.SendInMessage(message);
 			}
 
@@ -173,18 +192,15 @@ namespace StockSharp.Algo
 		/// <param name="message">The message that contain subscribe info.</param>
 		public virtual void SubscribeMarketData(Security security, MarketDataMessage message)
 		{
-			if (security == null)
-				throw new ArgumentNullException(nameof(security));
+			var msg = LocalizedStrings.SubscriptionSent.Put(security.Id,
+				message.DataType + (message.DataType.IsCandleDataType() ? " " + message.Arg : string.Empty));
 
-			if (message == null)
-				throw new ArgumentNullException(nameof(message));
+			if (message.From != null && message.To != null)
+				msg += LocalizedStrings.Str691Params.Put(message.From.Value, message.To.Value);
 
-			if (message.TransactionId == 0)
-				message.TransactionId = TransactionIdGenerator.GetNextId();
+			this.AddDebugLog(msg + ".");
 
-			message.FillSecurityInfo(this, security);
-
-			_subscriptionManager.SubscribeUnSubscribe(security, message);
+			_subscriptionManager.ProcessRequest(security, message, false);
 		}
 
 		/// <summary>
@@ -194,18 +210,15 @@ namespace StockSharp.Algo
 		/// <param name="message">The message that contain unsubscribe info.</param>
 		public virtual void UnSubscribeMarketData(Security security, MarketDataMessage message)
 		{
-			if (security == null)
-				throw new ArgumentNullException(nameof(security));
+			var msg = LocalizedStrings.UnSubscriptionSent.Put(security.Id,
+				message.DataType + (message.DataType.IsCandleDataType() ? " " + message.Arg : string.Empty));
 
-			if (message == null)
-				throw new ArgumentNullException(nameof(message));
+			if (message.From != null && message.To != null)
+				msg += LocalizedStrings.Str691Params.Put(message.From.Value, message.To.Value);
 
-			if (message.TransactionId == 0)
-				message.TransactionId = TransactionIdGenerator.GetNextId();
+			this.AddDebugLog(msg + ".");
 
-			message.FillSecurityInfo(this, security);
-
-			_subscriptionManager.SubscribeUnSubscribe(security, message);
+			_subscriptionManager.ProcessRequest(security, message, false);
 		}
 
 		private void SubscribeMarketData(Security security, MarketDataTypes type)

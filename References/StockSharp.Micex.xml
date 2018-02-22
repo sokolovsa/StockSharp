@@ -79,6 +79,11 @@
             </summary>
       <param name="message">Сообщение.</param>
     </member>
+    <member name="F:StockSharp.Micex.MicexMessageAdapter.DefaultHeartbeatInterval">
+      <summary>
+            Значение по умолчанию для <see cref="P:StockSharp.Messages.MessageAdapter.HeartbeatInterval" />.
+            </summary>
+    </member>
     <member name="P:StockSharp.Micex.MicexMessageAdapter.DllPath">
       <summary>
             Путь к файлу mtesrl.dll.

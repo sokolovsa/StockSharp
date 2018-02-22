@@ -33,6 +33,11 @@
             </summary>
       <param name="message">Сообщение.</param>
     </member>
+    <member name="F:StockSharp.Twime.TwimeMessageAdapter.DefaultHeartbeatInterval">
+      <summary>
+            Значение по умолчанию для <see cref="P:StockSharp.Messages.MessageAdapter.HeartbeatInterval" />.
+            </summary>
+    </member>
     <member name="P:StockSharp.Twime.TwimeMessageAdapter.TransactionAddress">
       <summary>
             Адрес транзакционного сервера. По-умолчанию значение равно адресу локального компьютера 91.208.232.244:9000.

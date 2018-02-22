@@ -9,14 +9,10 @@
             The message adapter for <see cref="N:StockSharp.Kraken"/>.
             </summary>
         </member>
-        <member name="M:StockSharp.Kraken.KrakenMessageAdapter.#ctor(Ecng.Common.IdGenerator)">
+        <member name="F:StockSharp.Kraken.KrakenMessageAdapter.DefaultHeartbeatInterval">
             <summary>
-            Initializes a new instance of the <see cref="T:StockSharp.Kraken.KrakenMessageAdapter"/>.
+            Default value for <see cref="P:StockSharp.Messages.MessageAdapter.HeartbeatInterval"/>.
             </summary>
-            <param name="transactionIdGenerator">Transaction id generator.</param>
-        </member>
-        <member name="M:StockSharp.Kraken.KrakenMessageAdapter.OnSendInMessage(StockSharp.Messages.Message)">
-            <inheritdoc />
         </member>
         <member name="P:StockSharp.Kraken.KrakenMessageAdapter.Key">
             <summary>
@@ -26,6 +22,11 @@
         <member name="P:StockSharp.Kraken.KrakenMessageAdapter.Secret">
             <summary>
             Secret.
+            </summary>
+        </member>
+        <member name="P:StockSharp.Kraken.KrakenMessageAdapter.IsMarginEnabled">
+            <summary>
+            Is margin enabled.
             </summary>
         </member>
         <member name="M:StockSharp.Kraken.KrakenMessageAdapter.Save(Ecng.Serialization.SettingsStorage)">
@@ -45,6 +46,75 @@
             Returns a string that represents the current object.
             </summary>
             <returns>A string that represents the current object.</returns>
+        </member>
+        <member name="M:StockSharp.Kraken.KrakenMessageAdapter.#ctor(Ecng.Common.IdGenerator)">
+            <summary>
+            Initializes a new instance of the <see cref="T:StockSharp.Kraken.KrakenMessageAdapter"/>.
+            </summary>
+            <param name="transactionIdGenerator">Transaction id generator.</param>
+        </member>
+        <member name="M:StockSharp.Kraken.KrakenMessageAdapter.OnSendInMessage(StockSharp.Messages.Message)">
+            <inheritdoc />
+        </member>
+        <member name="T:StockSharp.Kraken.KrakenOrderConditionTypes">
+            <summary>
+            Stop order types.
+            </summary>
+        </member>
+        <member name="F:StockSharp.Kraken.KrakenOrderConditionTypes.StopLoss">
+            <summary>
+            Stop-loss.
+            </summary>
+        </member>
+        <member name="F:StockSharp.Kraken.KrakenOrderConditionTypes.TakeProfit">
+            <summary>
+            Take-profit.
+            </summary>
+        </member>
+        <member name="F:StockSharp.Kraken.KrakenOrderConditionTypes.StopLossTakeProfit">
+            <summary>
+            Stop-loss and take-profit.
+            </summary>
+        </member>
+        <member name="T:StockSharp.Kraken.KrakenOrderCondition">
+            <summary>
+            <see cref="N:StockSharp.Kraken"/> order condition.
+            </summary>
+        </member>
+        <member name="M:StockSharp.Kraken.KrakenOrderCondition.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:StockSharp.Kraken.KrakenOrderCondition"/>.
+            </summary>
+        </member>
+        <member name="P:StockSharp.Kraken.KrakenOrderCondition.StopPrice">
+            <summary>
+            Activation price, when reached an order will be placed.
+            </summary>
+        </member>
+        <member name="P:StockSharp.Kraken.KrakenOrderCondition.Type">
+            <summary>
+            Type.
+            </summary>
+        </member>
+        <member name="P:StockSharp.Kraken.KrakenOrderCondition.IsTrailing">
+            <summary>
+            Trailing stop-loss.
+            </summary>
+        </member>
+        <member name="P:StockSharp.Kraken.KrakenOrderCondition.Leverage">
+            <summary>
+            Leverage.
+            </summary>
+        </member>
+        <member name="P:StockSharp.Kraken.KrakenOrderCondition.OrderFlags">
+            <summary>
+            Order flags.
+            </summary>
+        </member>
+        <member name="P:StockSharp.Kraken.KrakenOrderCondition.StartTime">
+            <summary>
+            Start time.
+            </summary>
         </member>
         <member name="T:StockSharp.Kraken.KrakenTrader">
             <summary>

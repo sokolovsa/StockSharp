@@ -5978,16 +5978,6 @@ namespace StockSharp.Localization
 		public static string Str633Params => GetString(Str633ParamsKey);
 
 		/// <summary>
-		/// Error registering security {0} to receive market data for {1}: {2}
-		/// </summary>
-		public const string Str634ParamsKey = nameof(Str634Params);
-
-		/// <summary>
-		/// Error registering security {0} to receive market data for {1}: {2}
-		/// </summary>
-		public static string Str634Params => GetString(Str634ParamsKey);
-
-		/// <summary>
 		/// Ending time is less or equal than beginning time {0}.
 		/// </summary>
 		public const string Str635ParamsKey = nameof(Str635Params);
@@ -6498,14 +6488,64 @@ namespace StockSharp.Localization
 		public static string Str689Params => GetString(Str689ParamsKey);
 
 		/// <summary>
-		/// Security {0} is registered to get market data for {1}
+		/// Security {0} is subscribed for {1}
 		/// </summary>
-		public const string Str690ParamsKey = nameof(Str690Params);
+		public const string SubscribedOkKey = nameof(SubscribedOk);
 
 		/// <summary>
-		/// Security {0} is registered to get market data for {1}
+		/// Security {0} is subscribed for {1}
 		/// </summary>
-		public static string Str690Params => GetString(Str690ParamsKey);
+		public static string SubscribedOk => GetString(SubscribedOkKey);
+
+		/// <summary>
+		/// Security {0} is unsubscribed for {1}
+		/// </summary>
+		public const string UnSubscribedOkKey = nameof(UnSubscribedOk);
+
+		/// <summary>
+		/// Security {0} is unsubscribed for {1}
+		/// </summary>
+		public static string UnSubscribedOk => GetString(UnSubscribedOkKey);
+
+		/// <summary>
+		/// Security {0} cannot subscribe for {1}. Error is '{0}'.
+		/// </summary>
+		public const string SubscribedErrorKey = nameof(SubscribedError);
+
+		/// <summary>
+		/// Security {0} cannot subscribe for {1}. Error is '{0}'.
+		/// </summary>
+		public static string SubscribedError => GetString(SubscribedErrorKey);
+
+		/// <summary>
+		/// Security {0} cannot unsubscribe from {1}. Error is '{0}'.
+		/// </summary>
+		public const string UnSubscribedErrorKey = nameof(UnSubscribedError);
+
+		/// <summary>
+		/// Security {0} cannot unsubscribe from {1}. Error is '{0}'.
+		/// </summary>
+		public static string UnSubscribedError => GetString(UnSubscribedErrorKey);
+
+		/// <summary>
+		/// Security {0} is subscribing for {1}
+		/// </summary>
+		public const string SubscriptionSentKey = nameof(SubscriptionSent);
+
+		/// <summary>
+		/// Security {0} is subscribing for {1}
+		/// </summary>
+		public static string SubscriptionSent => GetString(SubscriptionSentKey);
+
+		/// <summary>
+		/// Security {0} is unsubscribing from {1}
+		/// </summary>
+		public const string UnSubscriptionSentKey = nameof(UnSubscriptionSent);
+
+		/// <summary>
+		/// Security {0} is unsubscribing from {1}
+		/// </summary>
+		public static string UnSubscriptionSent => GetString(UnSubscriptionSentKey);
 
 		/// <summary>
 		/// from {0} till {1}
@@ -20720,12 +20760,22 @@ namespace StockSharp.Localization
 		/// <summary>
 		/// Trade price is not a multiple of security price step. Price step is '{0}', trade is '{1}'.
 		/// </summary>
-		public const string Str2200Key = nameof(Str2200);
+		public const string TradePriceNotMultipleKey = nameof(TradePriceNotMultiple);
 
 		/// <summary>
 		/// Trade price is not a multiple of security price step. Price step is '{0}', trade is '{1}'.
 		/// </summary>
-		public static string Str2200 => GetString(Str2200Key);
+		public static string TradePriceNotMultiple => GetString(TradePriceNotMultipleKey);
+
+		/// <summary>
+		/// Trade volume is not a multiple of security volume step. Volume step is '{0}', trade is '{1}'.
+		/// </summary>
+		public const string TradeVolumeNotMultipleKey = nameof(TradeVolumeNotMultiple);
+
+		/// <summary>
+		/// Trade volume is not a multiple of security volume step. Volume step is '{0}', trade is '{1}'.
+		/// </summary>
+		public static string TradeVolumeNotMultiple => GetString(TradeVolumeNotMultipleKey);
 
 		/// <summary>
 		/// Best bid price is greater than best ask price.
@@ -20786,6 +20836,16 @@ namespace StockSharp.Localization
 		/// Close price is not a multiple of security price step. Price step is '{0}', H is '{1}'.
 		/// </summary>
 		public static string Str2206 => GetString(Str2206Key);
+
+		/// <summary>
+		/// Candle volume is not a multiple of security volume step. Volume step is '{0}', candle is '{1}'.
+		/// </summary>
+		public const string CandleVolumeNotMultipleKey = nameof(CandleVolumeNotMultiple);
+
+		/// <summary>
+		/// Candle volume is not a multiple of security volume step. Volume step is '{0}', candle is '{1}'.
+		/// </summary>
+		public static string CandleVolumeNotMultiple => GetString(CandleVolumeNotMultipleKey);
 
 		/// <summary>
 		/// Loaded {0} {1}.
@@ -46506,5 +46566,205 @@ namespace StockSharp.Localization
 		/// Poloniex
 		/// </summary>
 		public static string Poloniex => GetString(PoloniexKey);
+		
+		/// <summary>
+		/// Restore positions
+		/// </summary>
+		public const string RestorePositionsKey = nameof(RestorePositions);
+
+		/// <summary>
+		/// Restore positions
+		/// </summary>
+		public static string RestorePositions => GetString(RestorePositionsKey);
+		
+		/// <summary>
+		/// Restore positions when strategy starts
+		/// </summary>
+		public const string RestorePositionsWhenStrategyStartsKey = nameof(RestorePositionsWhenStrategyStarts);
+
+		/// <summary>
+		/// RRestore positions when strategy starts
+		/// </summary>
+		public static string RestorePositionsWhenStrategyStarts => GetString(RestorePositionsWhenStrategyStartsKey);
+	
+		/// <summary>
+		/// Warranty provisions
+		/// </summary>
+		public const string WarrantyProvisionsKey = nameof(WarrantyProvisions);
+
+		/// <summary>
+		/// Warranty provisions
+		/// </summary>
+		public static string WarrantyProvisions => GetString(WarrantyProvisionsKey);
+		
+		/// <summary>
+		/// Warranty on one contract for testing
+		/// </summary>
+		public const string WarrantyOnOneContractForTestingKey = nameof(WarrantyOnOneContractForTesting);
+
+		/// <summary>
+		/// Warranty on one contract for testing
+		/// </summary>
+		public static string WarrantyOnOneContractForTesting => GetString(WarrantyOnOneContractForTestingKey);
+		
+		/// <summary>
+		/// The minimum size of the spread in the price steps for placing orders
+		/// </summary>
+		public const string MinimumSizeSpreadPriceStepsKey = nameof(MinimumSizeSpreadPriceSteps);
+
+		/// <summary>
+		/// The minimum size of the spread in the price steps for placing orders
+		/// </summary>
+		public static string MinimumSizeSpreadPriceSteps => GetString(MinimumSizeSpreadPriceStepsKey);
+
+		/// <summary>
+		/// Indent in the price steps from the edge of the order glass. more 0 - far from the spread, less 0 - the spread of the spread
+		/// </summary>
+		public const string IndentThePriceStepsKey = nameof(IndentThePriceSteps);
+
+		/// <summary>
+		/// Indent in the price steps from the edge of the order glass. more 0 - far from the spread, less0 - the spread of the spread
+		/// </summary>
+		public static string IndentThePriceSteps => GetString(IndentThePriceStepsKey);
+		
+		/// <summary>
+		/// Stop in seconds how much to keep open position
+		/// </summary>
+		public const string StopSecondsOpenPositionKey = nameof(StopSecondsOpenPosition);
+
+		/// <summary>
+		/// Stop in seconds how much to keep open position
+		/// </summary>
+		public static string StopSecondsOpenPosition => GetString(StopSecondsOpenPositionKey);
+		
+		/// <summary>
+		/// Stop order closing order type
+		/// </summary>
+		public const string StopClosingOrderTypeKey = nameof(StopClosingOrderType);
+
+		/// <summary>
+		/// Stop order closing order type
+		/// </summary>
+		public static string StopClosingOrderType => GetString(StopClosingOrderTypeKey);
+
+		/// <summary>
+		/// A shift in the price steps from the edge of the spread in price steps. To buy at a value of more 0 shifts the spread inside, less 0 away from the spread.
+		/// </summary>
+		public const string ShiftThePriceStepsFromTheEdgeKey = nameof(ShiftThePriceStepsFromTheEdge);
+
+		/// <summary>
+		/// A shift in the price steps from the edge of the spread in price steps. To buy at a value of more 0 shifts the spread inside, less0 away from the spread.
+		/// </summary>
+		public static string ShiftThePriceStepsFromTheEdge => GetString(ShiftThePriceStepsFromTheEdgeKey);
+		
+		/// <summary>
+		/// Timeout (sec)
+		/// </summary>
+		public const string TimeOutSecondKey = nameof(TimeOutSecond);
+
+		/// <summary>
+		/// Timeout (sec)
+		/// </summary>
+		public static string TimeOutSecond => GetString(TimeOutSecondKey);
+		
+		/// <summary>
+		/// The interval in seconds, not more than which you can rearrange orders.
+		/// </summary>
+		public const string IntervalInSecondsKey = nameof(IntervalInSeconds);
+
+		/// <summary>
+		/// The interval in seconds, not more than which you can rearrange orders.
+		/// </summary>
+		public static string IntervalInSeconds => GetString(IntervalInSecondsKey);
+		
+		/// <summary>
+		/// Stop and close positions
+		/// </summary>
+		public const string StopAndClosePositionsKey = nameof(StopAndClosePositions);
+
+		/// <summary>
+		/// Stop and close positions
+		/// </summary>
+		public static string StopAndClosePositions => GetString(StopAndClosePositionsKey);
+
+		/// <summary>
+		/// Strategy added
+		/// </summary>
+		public const string StrategyAddedKey = nameof(StrategyAdded);
+
+		/// <summary>
+		/// Strategy added
+		/// </summary>
+		public static string StrategyAdded => GetString(StrategyAddedKey);
+
+		/// <summary>
+		/// Field order
+		/// </summary>
+		public const string FieldOrderKey = nameof(FieldOrder);
+
+		/// <summary>
+		/// Field order
+		/// </summary>
+		public static string FieldOrder => GetString(FieldOrderKey);
+
+		/// <summary>
+		/// Fields '{0}' has the same order {1}.
+		/// </summary>
+		public const string FieldOrderDuplicatedKey = nameof(FieldOrderDuplicated);
+
+		/// <summary>
+		/// Fields '{0}' has the same order {1}.
+		/// </summary>
+		public static string FieldOrderDuplicated => GetString(FieldOrderDuplicatedKey);
+
+		/// <summary>
+		/// CSV directory
+		/// </summary>
+		public const string CsvDirectoryKey = nameof(CsvDirectory);
+
+		/// <summary>
+		/// CSV directory
+		/// </summary>
+		public static string CsvDirectory => GetString(CsvDirectoryKey);
+
+		/// <summary>
+		/// Directory with CSV files.
+		/// </summary>
+		public const string CsvDirectoryDescKey = nameof(CsvDirectoryDesc);
+
+		/// <summary>
+		/// Directory with CSV files.
+		/// </summary>
+		public static string CsvDirectoryDesc => GetString(CsvDirectoryDescKey);
+
+		/// <summary>
+		/// Heartbeat
+		/// </summary>
+		public const string HeartbeatKey = nameof(Heartbeat);
+
+		/// <summary>
+		/// Heartbeat
+		/// </summary>
+		public static string Heartbeat => GetString(HeartbeatKey);
+
+		/// <summary>
+		/// Heartbeat interval
+		/// </summary>
+		public const string HeartbeatIntervalKey = nameof(HeartbeatInterval);
+
+		/// <summary>
+		/// Heartbeat interval
+		/// </summary>
+		public static string HeartbeatInterval => GetString(HeartbeatIntervalKey);
+
+		/// <summary>
+		/// Custom colors
+		/// </summary>
+		public const string CustomColorsKey = nameof(CustomColors);
+
+		/// <summary>
+		/// Custom colors
+		/// </summary>
+		public static string CustomColors => GetString(CustomColorsKey);
 	}
 }

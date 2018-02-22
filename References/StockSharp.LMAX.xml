@@ -32,6 +32,11 @@
         <see cref="T:StockSharp.Messages.SecurityLookupMessage" /> required to get securities.
             </summary>
     </member>
+    <member name="F:StockSharp.LMAX.LmaxMessageAdapter.DefaultHeartbeatInterval">
+      <summary>
+            Default value for <see cref="P:StockSharp.Messages.MessageAdapter.HeartbeatInterval" />.
+            </summary>
+    </member>
     <member name="P:StockSharp.LMAX.LmaxMessageAdapter.Login">
       <summary>
             Login.

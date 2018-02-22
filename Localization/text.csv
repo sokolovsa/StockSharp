@@ -599,7 +599,6 @@ Str630Params;Security's {0} corresponding adapter is {1}.;Инструменту
 Str631Params;Adapter {0} does not support security {1} for {2}: {3};Адаптер {0} не поддерживает инструмент {1} для {2}: {3}
 SubscriptionProcessCancelled;Subscription process cancelled by user.;Процесс подписки отменен пользователем.
 Str633Params;For security {0} action for subscription for {1} was not found.;Для инструмента {0} не найдено действие на подписку для {1}.
-Str634Params;Error registering security {0} to receive market data for {1}: {2};Ошибка регистрации инструмента {0} на получение рыночных данных для {1}: {2}
 Str635Params;Ending time is less or equal than beginning time {0}.;Время окончания меньше или равно времени начала {0}.
 Str636Params;Series {0} was not stopped before that.;Серия {0} не была остановлена до этого.
 Str637;Method should be overridden for the factory.;Метод должен быть переопределен у фабрики.
@@ -651,7 +650,12 @@ ConnectionNotSupportSecurity;Connection does not support security {0}.;Подк�
 Str687Params;Securities {0} and {1} have the same trading system {2} ID.;Инструменты {0} и {1} имеют одинаковый идентификатор торговой системы {2}.
 Str688Params;Message '{0}' does not have information about the type of data being transferred.;Сообщение '{0}' не имеет информации о передаваемом типе данных.
 Str689Params;For order {0}/{1} security information has not been submitted.;Для заявки {0}/{1} не была передана информация об инструменте.
-Str690Params;Security {0} is registered to get market data for {1};Инструмент {0} зарегистрирован на получение рыночных данных для {1}
+SubscribedOk;Security {0} is subscribed for {1};Инструмент {0} подписан на {1}
+UnSubscribedOk;Security {0} is unsubscribed for {1};Инструмент {0} отписан от {1}
+SubscribedError;Security {0} cannot subscribe for {1}. Error is '{0}'.;Инструмент {0} не может подписаться на {1}. Ошибка'{0}'.
+UnSubscribedError;Security {0} cannot unsubscribe from {1}. Error is '{0}'.;Инструмент {0} не может отписаться от {1}. Ошибка'{0}'.
+SubscriptionSent;Security {0} is subscribing for {1};Инструмент {0} подписается на {1}
+UnSubscriptionSent;Security {0} is unsubscribing from {1};Инструмент {0} отписается от {1}
 Str691Params; from {0} till {1}; с {0} по {1}
 Str692Params;Security {0} for connection {1} not found.;Инструмент {0} для подключения {1} не найден.
 Str693Params;Cannot start export, because export is in state {0}.;Невозможно выполнить запуск экспорта, так как экспорт находится в состоянии {0}.
@@ -2072,13 +2076,15 @@ Str2193;During source work a maximum number of errors occurred. Source will be s
 Str2197Params;Next start at {0}.;Следующий запуск в {0}.
 Str2198Params;For {0} impossible to save {1} {2} because '{3}'.;Для {0} невозможно сохранить {1} {2} по причине '{3}'.
 Str2199;Price is less than or equal to zero.;Цена меньше или равна нулю.
-Str2200;Trade price is not a multiple of security price step. Price step is '{0}', trade is '{1}'.;Цена сделки не кратна шагу цены инструмента. Шаг цены '{0}', сделка '{1}'.
+TradePriceNotMultiple;Trade price is not a multiple of security price step. Price step is '{0}', trade is '{1}'.;Цена сделки не кратна шагу цены инструмента. Шаг цены '{0}', сделка '{1}'.
+TradeVolumeNotMultiple;Trade volume is not a multiple of security volume step. Volume step is '{0}', trade is '{1}'.;Объем сделки не кратен шагу объема инструмента. Шаг объема '{0}', сделка '{1}'.
 Str2201;Best bid price is greater than best ask price.;Цена лучшего бида больше цены лучшего оффера.
 Str2202;Some quotes in the market depth have zero or negative price.;Некоторые котировки в стакане имеют нулевую или отрицательную цену.
 Str2203;Open price is not a multiple of security price step. Price step is '{0}', O is '{1}'.;Цена открытия не кратна шагу цены инструмента. Шаг цены '{0}', O '{1}'.
 Str2204;High price is not a multiple of security price step. Price step is '{0}', H is '{1}'.;Максимальная цена не кратна шагу цены инструмента. Шаг цены '{0}', H '{1}'.
 Str2205;Low price is not a multiple of security price step. Price step is '{0}', L is '{1}'.;Минимальная цена не кратна шагу цены инструмента. Шаг цены '{0}', L '{1}'.
 Str2206;Close price in not a multiple of security price step. Price step is '{0}', C is '{1}'.;Цена закрытия не кратна шагу цены инструмента. Шаг цены '{0}', C '{1}'.
+CandleVolumeNotMultiple;Candle volume is not a multiple of security volume step. Volume step is '{0}', candle is '{1}'.;Объем свечи не кратен шагу объема инструмента. Шаг объема '{0}', свеча '{1}'.
 Str2207Params;Loaded {0} {1}.;Загружено {0} {1}.
 Str2208Params;For {0} {1} {2} ({3}) were loaded.;Для {0} загружено {1} {2} ({3}).
 Str2209;New connection...;Новое подключение...
@@ -4688,6 +4694,26 @@ HitBtc;HitBTC;HitBTC
 Kraken;Kraken;Kraken
 Okcoin;OKCoin;OKCoin
 Poloniex;Poloniex;Poloniex
+RestorePositions;Restore positions;Восстанавливать позиции
+RestorePositionsWhenStrategyStarts;Restore positions when strategy starts;Восстанавливать позиции при старте стратегии
+WarrantyProvisions;Warranty provisions;Гарантийное обеспечения
+WarrantyOnOneContractForTesting;Warranty on one contract for testing;Гарантийное обеспечения на один контракт для тестирования
+MinimumSizeSpreadPriceSteps;The minimum size of the spread in the price steps for placing orders;Минимальный размер спреда в шагах цены для выставления ордеров
+IndentThePriceSteps;Indent in the price steps from the edge of the order glass. > 0 - far from the spread, <0 - the spread of the spread;Отступ в шагах цены от края стакана для ордеров. > 0 - вдаль от спреда, < 0 - вглубь спреда
+StopSecondsOpenPosition;Stop in seconds how much to keep open position;Стоп в секундах сколько держать открытой позицию
+StopClosingOrderType;Stop order closing order type;Тип ордеров закрытия позиций по стопу
+ShiftThePriceStepsFromTheEdge;A shift in the price steps from the edge of the spread in price steps. To buy at a value of> 0 shifts the spread inside, <0 away from the spread.;Сдвиг в шагах цены от края спреда в шагах цены. Для покупки при значении> 0 сдвигает внутрь спреда, при < 0 вдаль от спреда.
+TimeOutSecond;Timeout (sec);Таймаут (сек)
+IntervalInSeconds;The interval in seconds, not more than which you can rearrange orders.;Интервал в секундах, не чаще которого можно переставлять заявки.
+StopAndClosePositions;Stop and close positions;Остановить и закрыть позиции
+StrategyAdded;Strategy added;Добавлена стратегия
+FieldOrder;Field order;Порядок поля
+FieldOrderDuplicated;Fields '{0}' has the same order {1}.;Поля '{0}' имеют одинаковый порядок {1}.
+CsvDirectory;CSV directory;CSV директория
+CsvDirectoryDesc;Directory with CSV files.;Директория с CSV файлами.
+Heartbeat;Heartbeat;Heartbeat
+HeartbeatInterval;Heartbeat interval;Heartbeat интервал
+CustomColors;Custom colors;Произвольные цвета
 DocStr0;Button activation alert settings;Кнопка активации настроек сигнала
 DocStr1;Initializes a new instance of the {0};Создать {0}
 DocStr2;Load settings;Загрузить настройки
@@ -9581,7 +9607,6 @@ DocStr5021;Объем, выраженный в валюте расчетов;О�
 DocStr5022;Дополнительная справочная информация (заполняется трейдером), как правило - номер поручения;Дополнительная справочная информация (заполняется трейдером), как правило - номер поручения
 DocStr5023;Номер торгового счета партнера;Номер торгового счета партнера
 DocStr5024;Код клиента, присвоенный партнером;Код клиента, присвоенный партнером
-DocStr5025;HEARTBEAT;HEARTBEAT
 DocStr5026;Пользовательский HEARTBEAT. Посылать не чаще чем раз в 1 секунду;Пользовательский HEARTBEAT. Посылать не чаще чем раз в 1 секунду
 DocStr5027;Перечислимый тип;Перечислимый тип
 DocStr5028;TEnumType: Имя			String Описание		String Размер	    Integer Тип			TEnumKind КолвоКонстант	Integer Константа1    String Константа2    String ... КонстантаN    String;TEnumType: Имя			String Описание		String Размер	    Integer Тип			TEnumKind КолвоКонстант	Integer Константа1    String Константа2    String ... КонстантаN    String
@@ -13233,7 +13258,6 @@ DocStr8742;Base class describing the dialect of the FIX protocol;Базовый 
 DocStr8743;Stream;Поток
 DocStr8744;Sequence id generator;Генератор цепочки идентификаторов
 DocStr8745;FIX version;FIX версия
-DocStr8746;Heartbeat interval;Heartbeat интервал
 DocStr8747;UTC time stamp format;UTC формат штампа времени
 DocStr8748;UTC time format;UTC формат времени
 DocStr8749;UTC date format;UTC формат даты
@@ -14610,3 +14634,24 @@ DocStr10247;Middle line color;Цвет средней линии
 DocStr10248;Upper line color;Цвет верхней линии
 DocStr10249;Lower line color;Цвет нижний линии
 DocStr10250;Attribute, applied to indicator's painter, to provide information about type of {0};Атрибут, применяющийся к отрисовщику индикатора для предоставления информации о типе {0}
+DocStr10251;Is specified security id asssociated with the board;Принадлежит ли указанный идентификатор инструмента площадку
+DocStr10252;{0}, if asssociated, otherwise, {1};{0}, если принадлежит, иначе, {1}
+DocStr10253;Stop order types;Тип стоп-заявок
+DocStr10254;Stop-loss and take-profit;Стоп-лосс и тейк-профит
+DocStr10255;Order flags;Флаги заявки
+DocStr10256;The maximum depth of order book. The default value is 100;Максимальная глубина стакана. По-умолчанию равно 100
+DocStr10257;To create a rule for the order's profit more on offset;Создать правило для отслеживания прибыльности заявки более чем на указанный уровень
+DocStr10258;The order to be traced for profit;Заявка, которую необходимо отслеживать на прибыльность
+DocStr10259;Profit offset;Уровень прибыли
+DocStr10260;Is specified message id real-time subscription;Является ли указанное сообщение подпиской реального времени
+DocStr10261;{0}, if real-time, otherwise, {1};{0}, если является подпиской реального времени, иначе, {1}
+DocStr10262;Support market-data response;Поддерживается ли ответ на подписку
+DocStr10263;The response with success to {0};Успешный ответ на {0}
+DocStr10264;Fill default {0} price and volume step by 0.00000001 value;Заполнить для {0} шаги цены и объема значением 0.00000001
+DocStr10265;To create a rule for the order's loss more on offset;Создать правило для отслеживания убыточности заявки более чем на указанный уровень
+DocStr10266;The order to be traced for loss;Заявка, которую необходимо отслеживать на убыточность
+DocStr10267;Loss offset;Уровень убытка
+DocStr10268;Is margin enabled;Включена ли маржинальность
+DocStr10269;Parameter identifier;Идентификатор параметра
+DocStr10270;Area color for {0} set as {1};Цвет области при {0} установленного в {1}
+DocStr10273;Custom elements colorer;Произвольный раскрасчик элементов

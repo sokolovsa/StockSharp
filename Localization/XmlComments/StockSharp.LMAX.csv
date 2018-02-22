@@ -6,6 +6,7 @@ M:StockSharp.LMAX.LmaxMessageAdapter.CreateOrderCondition/returns;DocStr45
 M:StockSharp.LMAX.LmaxMessageAdapter.OnSendInMessage(StockSharp.Messages.Message)/summary;DocStr46
 M:StockSharp.LMAX.LmaxMessageAdapter.OnSendInMessage(StockSharp.Messages.Message)/param/message;Str3166
 P:StockSharp.LMAX.LmaxMessageAdapter.SecurityLookupRequired/summary;DocStr452
+F:StockSharp.LMAX.LmaxMessageAdapter.DefaultHeartbeatInterval/summary;DocStr9884
 P:StockSharp.LMAX.LmaxMessageAdapter.Login/summary;Login
 P:StockSharp.LMAX.LmaxMessageAdapter.Password/summary;Password
 P:StockSharp.LMAX.LmaxMessageAdapter.IsDemo/summary;Str3388

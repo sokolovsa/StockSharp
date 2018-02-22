@@ -215,6 +215,11 @@
             Support portfolio subscriptions.
             </summary>
     </member>
+    <member name="P:StockSharp.Fix.Dialects.BaseFixDialect.IsSupportMarketDataResponse">
+      <summary>
+            Support market-data response.
+            </summary>
+    </member>
     <member name="P:StockSharp.Fix.Dialects.BaseFixDialect.SecurityExtendedFields">
       <summary>
             Names of extended security fields in <see cref="T:StockSharp.Messages.SecurityMessage" />.
@@ -601,6 +606,11 @@
     <member name="P:StockSharp.Fix.Dialects.IFixDialect.IsSupportSubscriptionByPortfolio">
       <summary>
             Support portfolio subscriptions.
+            </summary>
+    </member>
+    <member name="P:StockSharp.Fix.Dialects.IFixDialect.IsSupportMarketDataResponse">
+      <summary>
+            Support market-data response.
             </summary>
     </member>
     <member name="P:StockSharp.Fix.Dialects.IFixDialect.TimeFrames">
@@ -4785,6 +4795,11 @@
             The response with error to <see cref="F:StockSharp.Fix.Native.FixMessages.MarketDataRequest" />.
             </summary>
     </member>
+    <member name="F:StockSharp.Fix.Native.FixMessages.MarketDataRequestResponse">
+      <summary>
+            The response with success to <see cref="F:StockSharp.Fix.Native.FixMessages.MarketDataRequest" />.
+            </summary>
+    </member>
     <member name="F:StockSharp.Fix.Native.FixMessages.SecurityList">
       <summary>
             Information about securities.
@@ -6161,6 +6176,11 @@
             </summary>
       <param name="dialect">The FIX dialect.</param>
       <returns>The dialect.</returns>
+    </member>
+    <member name="F:StockSharp.Fix.FixMessageAdapter.DefaultHeartbeatInterval">
+      <summary>
+            Default value for <see cref="P:StockSharp.Messages.MessageAdapter.HeartbeatInterval" />.
+            </summary>
     </member>
     <member name="P:StockSharp.Fix.FixMessageAdapter.Address">
       <summary>

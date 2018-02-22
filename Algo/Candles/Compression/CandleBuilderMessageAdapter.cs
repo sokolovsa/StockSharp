@@ -182,6 +182,12 @@ namespace StockSharp.Algo.Candles.Compression
 		/// <param name="message">The message.</param>
 		protected override void OnInnerAdapterNewOutMessage(Message message)
 		{
+			if (message.IsBack)
+			{
+				base.OnInnerAdapterNewOutMessage(message);
+				return;
+			}
+
 			switch (message.Type)
 			{
 				case MessageTypes.MarketData:
@@ -441,7 +447,14 @@ namespace StockSharp.Algo.Candles.Compression
 
 			var msg = (MarketDataMessage)info.MarketDataMessage.Clone();
 			msg.TransactionId = info.TransactionId;
-			msg.From = info.LastTime;
+
+			if (!isBack && !msg.IsRealTimeSubscription())
+			{
+				msg.From = info.LastTime;
+
+				if (msg.To != null && msg.From >= msg.To)
+					return;
+			}
 
 			var reseted = ResetMarketDataMessageArg(info, msg);
 

@@ -13,9 +13,6 @@ Created: 2015, 12, 2, 8:18 PM
 Copyright 2010 by StockSharp, LLC
 *******************************************************************************************/
 #endregion S# License
-
-using MoreLinq;
-
 namespace SampleChart
 {
 	using System;
@@ -27,6 +24,8 @@ namespace SampleChart
 	using System.Windows.Media;
 
 	using DevExpress.Xpf.Core;
+
+	using MoreLinq;
 
 	using Ecng.Backup;
 	using Ecng.Backup.Yandex;
@@ -402,20 +401,19 @@ namespace SampleChart
 			if(_candleElement == null)
 				return;
 
-			var dd = new ChartDrawData();
-
-			if (_checkCustomColors.IsChecked == true)
+			if (CustomColors.IsChecked == true)
 			{
-				dd.SetCustomColorer(_candleElement, (dto, isUpCandle, isLastCandle) => dto.Hour % 2 != 0 ? null : (isUpCandle ? (Color?)Colors.Chartreuse : Colors.Aqua));
-				_indicators.Keys.ForEach(el => dd.SetCustomColorer(el, dto => dto.Hour % 2 != 0 ? null : (Color?)Colors.Magenta));
+				_candleElement.Colorer = (dto, isUpCandle, isLastCandle) => dto.Hour % 2 != 0 ? null : (isUpCandle ? (Color?)Colors.Chartreuse : Colors.Aqua);
+				_indicators.Keys.ForEach(el => el.Colorer = dto => dto.Hour % 2 != 0 ? null : (Color?)Colors.Magenta);
 			}
 			else
 			{
-				dd.SetCustomColorer(_candleElement, null);
-				_indicators.Keys.ForEach(el => dd.SetCustomColorer(el, null));
+				_candleElement.Colorer = null;
+				_indicators.Keys.ForEach(el => el.Colorer = null);
 			}
 
-			Chart.Draw(dd);
+			// refresh prev painted elements
+			Chart.Draw(new ChartDrawData());
 		}
 	}
 }

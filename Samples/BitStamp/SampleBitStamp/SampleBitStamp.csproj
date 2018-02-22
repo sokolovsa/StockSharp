@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SampleBitStamp</RootNamespace>
     <AssemblyName>SampleBitStamp</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -96,9 +96,6 @@
     </Reference>
     <Reference Include="Ecng.Xaml">
       <HintPath>z:\ss\bin\ecng\_ref\Ecng.Xaml.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit">
-      <HintPath>..\..\..\References\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="DevExpress.Data.v17.2">
       <HintPath>..\..\..\References\DevExpress.Data.v17.2.dll</HintPath>
@@ -250,7 +247,7 @@
       <Project>{DCE69DB8-53CA-4B7F-9368-02F175A31074}</Project>
       <Name>BusinessEntities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\StockSharpApps\Connectors\BitStamp\BitStamp.csproj">
+    <ProjectReference Include="..\..\..\..\StockSharp %28GitLab%29\Connectors\BitStamp\BitStamp.csproj">
       <Project>{90B93AF4-3168-4415-B916-9E078F192696}</Project>
       <Name>BitStamp</Name>
     </ProjectReference>

@@ -3364,7 +3364,7 @@ namespace StockSharp.Algo
 
 			var folderName = id;
 
-			if (_reservedDos.Any(d => folderName.StartsWith(d, StringComparison.InvariantCultureIgnoreCase)))
+			if (_reservedDos.Any(d => folderName.StartsWithIgnoreCase(d)))
 				folderName = "_" + folderName;
 
 			return _securitySeparators
@@ -3384,7 +3384,7 @@ namespace StockSharp.Algo
 
 			var id = folderName.ToUpperInvariant();
 
-			if (id[0] == '_' && _reservedDos.Any(d => id.StartsWith("_" + d, StringComparison.InvariantCultureIgnoreCase)))
+			if (id[0] == '_' && _reservedDos.Any(d => id.StartsWithIgnoreCase("_" + d)))
 				id = id.Substring(1);
 
 			return _securitySeparators
@@ -4502,6 +4502,20 @@ namespace StockSharp.Algo
 				throw new ArgumentNullException(nameof(messages));
 
 			return messages.SelectMany(d => d.Asks.Concat(d.Bids).OrderByDescending(q => q.Price).Select(q => new TimeQuoteChange(q, d)));
+		}
+
+		/// <summary>
+		/// Is specified security id asssociated with the board.
+		/// </summary>
+		/// <param name="securityId">Security ID.</param>
+		/// <param name="board">Board info.</param>
+		/// <returns><see langword="true" />, if asssociated, otherwise, <see langword="false"/>.</returns>
+		public static bool IsAssociated(this SecurityId securityId, ExchangeBoard board)
+		{
+			if (board == null)
+				throw new ArgumentNullException(nameof(board));
+
+			return securityId.BoardCode.CompareIgnoreCase(board.Code);
 		}
 	}
 }

@@ -692,6 +692,19 @@ namespace StockSharp.Messages
 		}
 
 		/// <summary>
+		/// Is specified message id real-time subscription.
+		/// </summary>
+		/// <param name="message">Message.</param>
+		/// <returns><see langword="true" />, if real-time, otherwise, <see langword="false"/>.</returns>
+		public static bool IsRealTimeSubscription(this MarketDataMessage message)
+		{
+			if (message == null)
+				throw new ArgumentNullException(nameof(message));
+
+			return message.From == null && message.To == null;
+		}
+
+		/// <summary>
 		/// Validate <see cref="MarketDataMessage.From"/> and <see cref="MarketDataMessage.To"/> values.
 		/// </summary>
 		/// <param name="message">Message.</param>
@@ -735,5 +748,36 @@ namespace StockSharp.Messages
 		/// <returns>Check result.</returns>
 		public static bool IsBestAskField(this Level1Fields field) =>
 			field == Level1Fields.BestAskPrice || field == Level1Fields.BestAskTime || field == Level1Fields.BestAskVolume;
+
+		/// <summary>
+		/// Fill default <see cref="SecurityTypes.CryptoCurrency"/> price and volume step by 0.00000001 value.
+		/// </summary>
+		/// <param name="secId">Security ID.</param>
+		/// <returns>A message containing info about the security.</returns>
+		public static SecurityMessage FillDefaultCryptoFields(this SecurityId secId)
+		{
+			var message = new SecurityMessage
+			{
+				SecurityId = secId,
+			}.FillDefaultCryptoFields();
+
+			return message;
+		}
+
+		/// <summary>
+		/// Fill default <see cref="SecurityTypes.CryptoCurrency"/> price and volume step by 0.00000001 value.
+		/// </summary>
+		/// <param name="message">A message containing info about the security.</param>
+		/// <returns>A message containing info about the security.</returns>
+		public static SecurityMessage FillDefaultCryptoFields(this SecurityMessage message)
+		{
+			if (message == null)
+				throw new ArgumentNullException(nameof(message));
+
+			message.PriceStep = message.VolumeStep = 0.00000001m;
+			message.SecurityType = SecurityTypes.CryptoCurrency;
+
+			return message;
+		}
 	}
 }
