@@ -376,7 +376,7 @@ namespace SampleChart
 
 			_candle.ClosePrice = price;
 
-			_candle.TotalVolume += tick.TradeVolume.Value;
+			_candle.TotalVolume += tick.TradeVolume ?? 0m;
 
 			lock(_lock)
 				_volumeProfile.Update(tick.TradePrice.Value, tick.TradeVolume, tick.OriginSide);
