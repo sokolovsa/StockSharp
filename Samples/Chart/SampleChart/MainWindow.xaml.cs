@@ -203,7 +203,7 @@ namespace SampleChart
 			var isBuild = BuildFromTicks.IsChecked == true;
 			var format = Format.SelectedFormat;
 
-			var maxDays = isBuild ? 4 : 30 * (int)_timeframe.TotalMinutes;
+			var maxDays = isBuild ? 5 : 30 * (int)_timeframe.TotalMinutes;
 
 			Task.Factory.StartNew(() =>
 			{
@@ -376,7 +376,7 @@ namespace SampleChart
 
 			_candle.ClosePrice = price;
 
-			_candle.TotalVolume += tick.TradeVolume ?? 0m;
+			_candle.TotalVolume += tick.TradeVolume ?? 0;
 
 			lock(_lock)
 				_volumeProfile.Update(tick.TradePrice.Value, tick.TradeVolume, tick.OriginSide);
