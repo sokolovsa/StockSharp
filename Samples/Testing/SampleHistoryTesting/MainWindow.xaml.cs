@@ -31,8 +31,6 @@ namespace SampleHistoryTesting
 	using StockSharp.Algo;
 	using StockSharp.Algo.Candles;
 	using StockSharp.Algo.Commissions;
-	using StockSharp.Algo.History;
-	using StockSharp.Algo.History.Russian.Finam;
 	using StockSharp.Algo.Storages;
 	using StockSharp.Algo.Testing;
 	using StockSharp.Algo.Indicators;
@@ -118,8 +116,6 @@ namespace SampleHistoryTesting
 		private readonly InMemoryNativeIdStorage _nativeIdStorage = new InMemoryNativeIdStorage();
 		private readonly InMemoryExchangeInfoProvider _exchangeInfoProvider = new InMemoryExchangeInfoProvider();
 
-		private readonly FinamHistorySource _finamHistorySource;
-
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -170,8 +166,6 @@ namespace SampleHistoryTesting
 				FinamCandlesCheckBox,
 				YahooCandlesCheckBox,
 			});
-
-			_finamHistorySource = new FinamHistorySource(_nativeIdStorage, _exchangeInfoProvider);
 		}
 
 		private void StartBtnClick(object sender, RoutedEventArgs e)
@@ -219,7 +213,6 @@ namespace SampleHistoryTesting
 
 			if (FinamCandlesCheckBox.IsChecked == true)
 			{
-				_finamHistorySource.Refresh(new FinamSecurityStorage(security), security, s => {}, () => false);
 			}
 
 			// create backtesting modes
@@ -295,25 +288,6 @@ namespace SampleHistoryTesting
 					Level1Equity,
 					Level1Position),
 
-				Tuple.Create(
-					FinamCandlesCheckBox,
-					FinamCandlesProgress,
-					FinamCandlesParameterGrid,
-					// candles
-					new EmulationInfo {UseCandleTimeFrame = timeFrame, HistorySource = d => _finamHistorySource.GetCandles(security, timeFrame, d.Date, d.Date), CurveColor = Colors.DarkBlue, StrategyName = LocalizedStrings.FinamCandles},
-					FinamCandlesChart,
-					FinamCandlesEquity,
-					FinamCandlesPosition),
-
-				Tuple.Create(
-					YahooCandlesCheckBox,
-					YahooCandlesProgress,
-					YahooCandlesParameterGrid,
-					// candles
-					new EmulationInfo {UseCandleTimeFrame = timeFrame, HistorySource = d => new YahooHistorySource(_exchangeInfoProvider).GetCandles(security, timeFrame, d.Date, d.Date), CurveColor = Colors.DarkBlue, StrategyName = LocalizedStrings.YahooCandles},
-					YahooCandlesChart,
-					YahooCandlesEquity,
-					YahooCandlesPosition),
 			};
 
 			// storage to historical data
