@@ -53,7 +53,7 @@ namespace SampleChart
 		private ChartCandleElement _candleElement;
 		private CandleMessage _currCandle;
 		private readonly DispatcherTimer _chartUpdateTimer = new DispatcherTimer();
-		private readonly SynchronizedDictionary<DateTimeOffset, Tuple<CandleMessage, bool>> _updatedCandles = new SynchronizedDictionary<DateTimeOffset, Tuple<CandleMessage, bool>>();
+		private readonly SynchronizedDictionary<DateTimeOffset, CandleMessage> _updatedCandles = new SynchronizedDictionary<DateTimeOffset, CandleMessage>();
 		private readonly CachedSynchronizedList<Candle> _allCandles = new CachedSynchronizedList<Candle>();
 		private Security _security;
 		private readonly IExchangeInfoProvider _exchangeInfoProvider = new InMemoryExchangeInfoProvider();
@@ -235,7 +235,7 @@ namespace SampleChart
 								foreach (var candle in candles)
 								{
 									_currCandle = candle;
-									_updatedCandles[candle.OpenTime] = Tuple.Create(candle, candle.State == CandleStates.Finished);
+									_updatedCandles[candle.OpenTime] = candle;
 								}	
 							}
 						}
@@ -263,7 +263,7 @@ namespace SampleChart
 						lock (_updatedCandles.SyncRoot)
 						{
 							_currCandle = candleMsg;
-							_updatedCandles[candleMsg.OpenTime] = Tuple.Create(candleMsg, true);
+							_updatedCandles[candleMsg.OpenTime] = candleMsg;
 						}
 
 						_lastTime = candleMsg.OpenTime;
@@ -330,7 +330,7 @@ namespace SampleChart
 							foreach (var candle in candles)
 							{
 								_currCandle = candle;
-								_updatedCandles[candle.OpenTime] = Tuple.Create(candle, candle.State == CandleStates.Finished);
+								_updatedCandles[candle.OpenTime] = candle;
 							}	
 						}
 					}
@@ -339,28 +339,42 @@ namespace SampleChart
 				_lastTime += TimeSpan.FromSeconds(RandomGen.GetInt(1, 10));
 			}
 
-			Tuple<Candle, bool>[] candlesToUpdate;
+			Candle[] candlesToUpdate;
 			lock (_updatedCandles.SyncRoot)
 			{
-				candlesToUpdate = _updatedCandles.OrderBy(p => p.Key).Select(p => Tuple.Create(p.Value.Item1.ToCandle(_security), p.Value.Item2)).ToArray();
+				candlesToUpdate = _updatedCandles.OrderBy(p => p.Key).Select(kv => kv.Value.ToCandle(_security)).ToArray();
 				_updatedCandles.Clear();
 			}
 
-			var lastCandle = _allCandles.LastOrDefault();
-			_allCandles.AddRange(candlesToUpdate.Where(c => lastCandle == null || c.Item1.OpenTime != lastCandle.OpenTime).Select(t => t.Item1));
+			foreach(var candle in candlesToUpdate)
+			{
+				var last = _allCandles.LastOrDefault();
+
+				if (last != null && last.State != CandleStates.Finished)
+				{
+					if(candle.OpenTime != last.OpenTime)
+						throw new InvalidOperationException("got unexpected candle");
+
+					_allCandles[_allCandles.Count - 1] = candle;
+				}
+				else
+				{
+					if(last?.OpenTime == candle.OpenTime)
+						continue;
+
+					if(last?.OpenTime > candle.OpenTime)
+						throw new InvalidOperationException("got invalid candle");
+
+					_allCandles.Add(candle);
+				}
+			}
 
 			ChartDrawData chartData = null;
 
-			foreach (var tuple in candlesToUpdate)
+			foreach (var candle in candlesToUpdate)
 			{
-				var candle = tuple.Item1;
-				var needToFinish = tuple.Item2;
-
 				if (chartData == null)
 					chartData = new ChartDrawData();
-
-				if (needToFinish && candle.State != CandleStates.Finished)
-					candle.State = CandleStates.Finished;
 
 				var chartGroup = chartData.Group(candle.OpenTime);
 

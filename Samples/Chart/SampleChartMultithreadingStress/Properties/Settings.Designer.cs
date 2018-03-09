@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SampleRequestMoreData.Properties {
+namespace SampleChartMultithreadingStress.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

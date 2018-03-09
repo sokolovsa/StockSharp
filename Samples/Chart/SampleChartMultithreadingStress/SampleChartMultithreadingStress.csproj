@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D4226215-090D-4F2F-9D56-02ED30AEA50C}</ProjectGuid>
+    <ProjectGuid>{6873831B-9EDE-4859-A528-89A403C3C108}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SampleRequestMoreData</RootNamespace>
-    <AssemblyName>SampleRequestMoreData</AssemblyName>
+    <RootNamespace>SampleChartMultithreadingStress</RootNamespace>
+    <AssemblyName>SampleChartMultithreadingStress</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -158,6 +158,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\ss\ss\Logging\Logging.csproj">
+      <Project>{c4476add-a3d5-41bb-9d43-55d865863b78}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Algo\Algo.csproj">
       <Project>{2A5C6FAD-106C-4A4A-B602-77A6B1034CA2}</Project>
       <Name>Algo</Name>

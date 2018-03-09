@@ -1,9 +1,9 @@
-﻿<Application x:Class="SampleRequestMoreData.App"
+﻿<Application x:Class="SampleChartMultithreadingStress.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml"
-			 Startup="App_OnStartup"
-			 DispatcherUnhandledException="ApplicationDispatcherUnhandledException">
+             Startup="App_OnStartup"
+             DispatcherUnhandledException="ApplicationDispatcherUnhandledException">
     <Application.Resources>
     </Application.Resources>
 </Application>
