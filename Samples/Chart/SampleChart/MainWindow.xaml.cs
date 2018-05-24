@@ -155,8 +155,6 @@ namespace SampleChart
 				Chart.Draw(chartData);
 
 				_indicators[element] = indicator;
-
-				this.GuiAsync(() => CustomColors_Changed(null, null));
 			});
 		}
 
