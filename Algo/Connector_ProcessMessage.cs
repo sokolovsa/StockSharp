@@ -25,12 +25,7 @@ namespace StockSharp.Algo
 
 	using MoreLinq;
 
-	using StockSharp.Algo.Candles.Compression;
-	using StockSharp.Algo.Commissions;
-	using StockSharp.Algo.Latency;
-	using StockSharp.Algo.PnL;
 	using StockSharp.Algo.Risk;
-	using StockSharp.Algo.Slippage;
 	using StockSharp.Algo.Storages;
 	using StockSharp.BusinessEntities;
 	using StockSharp.Logging;
@@ -111,9 +106,15 @@ namespace StockSharp.Algo
 				if (message.Type == MessageTypes.MarketData)
 				{
 					var mdMsg = (MarketDataMessage)message;
-					var security = GetSecurity(mdMsg.SecurityId);
 
+					var security = mdMsg.DataType == MarketDataTypes.News ? null : GetSecurity(mdMsg.SecurityId);
 					_subscriptionManager.ProcessRequest(security, mdMsg, true);
+				}
+				else if (message.Type == MessageTypes.OrderGroupCancel)
+				{
+					var cancelMsg = (OrderGroupCancelMessage)message;
+					_entityCache.AddMassCancelationId(cancelMsg.TransactionId);
+					SendInMessage(message);
 				}
 				else
 					SendInMessage(message);
@@ -300,32 +301,23 @@ namespace StockSharp.Algo
 					//	OwnInnerAdaper = true
 					//};
 
-					if (LatencyManager != null)
-						_inAdapter = new LatencyMessageAdapter(_inAdapter) { LatencyManager = LatencyManager, OwnInnerAdaper = true };
-
-					if (SlippageManager != null)
-						_inAdapter = new SlippageMessageAdapter(_inAdapter) { SlippageManager = SlippageManager, OwnInnerAdaper = true };
-
-					if (PnLManager != null)
-						_inAdapter = new PnLMessageAdapter(_inAdapter) { PnLManager = PnLManager, OwnInnerAdaper = true };
-
-					if (CommissionManager != null)
-						_inAdapter = new CommissionMessageAdapter(_inAdapter) { CommissionManager = CommissionManager, OwnInnerAdaper = true };
-
 					if (RiskManager != null)
 						_inAdapter = new RiskMessageAdapter(_inAdapter) { RiskManager = RiskManager, OwnInnerAdaper = true };
 
 					if (SupportOffline)
 						_inAdapter = new OfflineMessageAdapter(_inAdapter) { OwnInnerAdaper = true };
 
-					if (SupportSubscriptionTracking)
-						_inAdapter = new SubscriptionMessageAdapter(_inAdapter) { OwnInnerAdaper = true };
-
 					if (_entityRegistry != null && _storageRegistry != null)
-						_inAdapter = StorageAdapter = new StorageMessageAdapter(_inAdapter, _entityRegistry, _storageRegistry) { OwnInnerAdaper = true };
+					{
+						_inAdapter = StorageAdapter = new StorageMessageAdapter(_inAdapter, _entityRegistry, _storageRegistry)
+						{
+							OwnInnerAdaper = true,
+							OverrideSecurityData = OverrideSecurityData
+						};
+					}
 
-					if (SupportCandleBuilder)
-						_inAdapter = new CandleBuilderMessageAdapter(_inAdapter, _entityCache.ExchangeInfoProvider) { OwnInnerAdaper = true };
+					if (SupportSubscriptionTracking)
+						_inAdapter = new SubscriptionMessageAdapter(_inAdapter) { OwnInnerAdaper = true/*, IsRestoreOnReconnect = IsRestoreSubscriptionOnReconnect*/ };
 
 					if (SupportLevel1DepthBuilder)
 						_inAdapter = new Level1DepthBuilderAdapter(_inAdapter) { OwnInnerAdaper = true };
@@ -451,35 +443,13 @@ namespace StockSharp.Algo
 			}
 		}
 
-		private bool _supportCandleBuilder;
-
-		/// <summary>
-		/// Use <see cref="CandleBuilderMessageAdapter"/>.
-		/// </summary>
-		public bool SupportCandleBuilder
-		{
-			get => _supportCandleBuilder;
-			set
-			{
-				if (_supportCandleBuilder == value)
-					return;
-
-				if (value)
-					EnableAdapter(a => new CandleBuilderMessageAdapter(a, _entityCache.ExchangeInfoProvider) { OwnInnerAdaper = true }, typeof(StorageMessageAdapter));
-				else
-					DisableAdapter<CandleBuilderMessageAdapter>();
-
-				_supportCandleBuilder = value;
-			}
-		}
-
 		/// <summary>
 		/// Send lookup messages on connect. By default is <see langword="true"/>.
 		/// </summary>
 		public bool LookupMessagesOnConnect { get; set; } = true;
 
 		/// <summary>
-		/// Send lookup messages on connect. By default is <see langword="true"/>.
+		/// Send subscribe messages on connect. By default is <see langword="true"/>.
 		/// </summary>
 		public bool AutoPortfoliosSubscribe { get; set; } = true;
 
@@ -813,7 +783,7 @@ namespace StockSharp.Algo
 
 			var security = _subscriptionManager.ProcessResponse(mdMsg.OriginalTransactionId, out var originalMsg);
 
-			if (security == null)
+			if (security == null && originalMsg?.DataType != MarketDataTypes.News)
 			{
 				if (error != null)
 					RaiseError(error);
@@ -915,7 +885,7 @@ namespace StockSharp.Algo
 								SetAdapterFailed(adapter, message, ConnectionStates.Connecting, true);
 						}
 						else
-							SetAdapterFailed(adapter, message, ConnectionStates.Connecting, false, new InvalidOperationException(LocalizedStrings.Str683, message.Error));
+							SetAdapterFailed(adapter, message, ConnectionStates.Connecting, false);
 
 						return;
 					}
@@ -939,7 +909,7 @@ namespace StockSharp.Algo
 								SetAdapterFailed(adapter, message, ConnectionStates.Disconnecting, false);
 						}
 						else
-							SetAdapterFailed(adapter, message, ConnectionStates.Disconnecting, false, new InvalidOperationException(LocalizedStrings.Str684, message.Error));
+							SetAdapterFailed(adapter, message, ConnectionStates.Disconnecting, false);
 
 						return;
 					}
@@ -1088,11 +1058,11 @@ namespace StockSharp.Algo
 				RaiseConnected();
 		}
 
-		private void SetAdapterFailed(IMessageAdapter adapter, BaseConnectionMessage message, ConnectionStates checkState, bool raiseTimeOut, Exception error = null)
+		private void SetAdapterFailed(IMessageAdapter adapter, BaseConnectionMessage message, ConnectionStates checkState, bool raiseTimeOut)
 		{
 			_adapterStates[adapter] = ConnectionStates.Failed;
 
-			error = error ?? message.Error;
+			var error = message.Error ?? new InvalidOperationException(message is ConnectMessage ? LocalizedStrings.Str683 : LocalizedStrings.Str684);
 
 			// raise ConnectionError only one time
 			if (ConnectionState == checkState)
@@ -1136,7 +1106,7 @@ namespace StockSharp.Algo
 				if (!UpdateSecurityByDefinition)
 					return false;
 
-				s.ApplyChanges(message, _entityCache.ExchangeInfoProvider);
+				s.ApplyChanges(message, _entityCache.ExchangeInfoProvider, OverrideSecurityData);
 				return true;
 			});
 
@@ -1679,7 +1649,7 @@ namespace StockSharp.Algo
 
 		private void ProcessOrderMessage(Order o, Security security, ExecutionMessage message, long transactionId)
 		{
-			if (message.OrderState != OrderStates.Failed)
+			if (message.OrderState != OrderStates.Failed && message.Error == null)
 			{
 				var changes = _entityCache.ProcessOrderMessage(o, security, message, transactionId, out var pfInfo);
 
@@ -1826,7 +1796,10 @@ namespace StockSharp.Algo
 			}
 
 			if (!tuple.Item2)
+			{
+				this.AddWarningLog("Duplicate own trade message: {0}", message);
 				return;
+			}
 
 			RaiseNewMyTrade(tuple.Item1);
 		}

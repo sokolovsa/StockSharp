@@ -147,7 +147,8 @@ namespace StockSharp.Messages
 
 		string ILogSource.Name => InnerAdapter.Name;
 
-		ILogSource ILogSource.Parent
+		/// <inheritdoc />
+		public virtual ILogSource Parent
 		{
 			get => InnerAdapter.Parent;
 			set => InnerAdapter.Parent = value;
@@ -176,18 +177,27 @@ namespace StockSharp.Messages
 		}
 
 		/// <inheritdoc />
+		public bool CheckTimeFrameByRequest
+		{
+			get => InnerAdapter.CheckTimeFrameByRequest;
+			set => InnerAdapter.CheckTimeFrameByRequest = value;
+		}
+
+		/// <inheritdoc />
 		public ReConnectionSettings ReConnectionSettings => InnerAdapter.ReConnectionSettings;
 
 		/// <inheritdoc />
 		public IdGenerator TransactionIdGenerator => InnerAdapter.TransactionIdGenerator;
 
-		MessageTypes[] IMessageAdapter.SupportedMessages
+		/// <inheritdoc />
+		public virtual MessageTypes[] SupportedMessages
 		{
 			get => InnerAdapter.SupportedMessages;
 			set => InnerAdapter.SupportedMessages = value;
 		}
 
-		MarketDataTypes[] IMessageAdapter.SupportedMarketDataTypes
+		/// <inheritdoc />
+		public virtual MarketDataTypes[] SupportedMarketDataTypes
 		{
 			get => InnerAdapter.SupportedMarketDataTypes;
 			set => InnerAdapter.SupportedMarketDataTypes = value;
@@ -202,36 +212,47 @@ namespace StockSharp.Messages
 			set => InnerAdapter.HeartbeatInterval = value;
 		}
 
-		bool IMessageAdapter.PortfolioLookupRequired => InnerAdapter.PortfolioLookupRequired;
+		/// <inheritdoc />
+		public virtual bool PortfolioLookupRequired => InnerAdapter.PortfolioLookupRequired;
 
-		bool IMessageAdapter.SecurityLookupRequired => InnerAdapter.SecurityLookupRequired;
+		/// <inheritdoc />
+		public virtual bool SecurityLookupRequired => InnerAdapter.SecurityLookupRequired;
 
-		bool IMessageAdapter.OrderStatusRequired => InnerAdapter.OrderStatusRequired;
+		/// <inheritdoc />
+		public virtual bool OrderStatusRequired => InnerAdapter.OrderStatusRequired;
 
-		IEnumerable<TimeSpan> IMessageAdapter.TimeFrames => InnerAdapter.TimeFrames;
+		/// <inheritdoc />
+		public virtual IEnumerable<TimeSpan> TimeFrames => InnerAdapter.TimeFrames;
 
 		/// <inheritdoc />
 		public string StorageName => InnerAdapter.StorageName;
 
 		/// <inheritdoc />
-		public bool IsNativeIdentifiersPersistable => InnerAdapter.IsNativeIdentifiersPersistable;
+		public virtual bool IsNativeIdentifiersPersistable => InnerAdapter.IsNativeIdentifiersPersistable;
 
 		/// <inheritdoc />
-		public bool IsNativeIdentifiers => InnerAdapter.IsNativeIdentifiers;
+		public virtual bool IsNativeIdentifiers => InnerAdapter.IsNativeIdentifiers;
 
 		/// <inheritdoc />
-		public bool IsFullCandlesOnly => InnerAdapter.IsFullCandlesOnly;
+		public virtual bool IsFullCandlesOnly => InnerAdapter.IsFullCandlesOnly;
 
 		/// <inheritdoc />
-		public bool IsSupportSubscriptions => InnerAdapter.IsSupportSubscriptions;
+		public virtual bool IsSupportSubscriptions => InnerAdapter.IsSupportSubscriptions;
 
 		/// <inheritdoc />
-		public bool IsSupportSubscriptionBySecurity => InnerAdapter.IsSupportSubscriptionBySecurity;
+		public virtual bool IsSupportSubscriptionBySecurity => InnerAdapter.IsSupportSubscriptionBySecurity;
 
 		/// <inheritdoc />
-		public bool IsSupportSubscriptionByPortfolio => InnerAdapter.IsSupportSubscriptionByPortfolio;
+		public virtual bool IsSupportSubscriptionByPortfolio => InnerAdapter.IsSupportSubscriptionByPortfolio;
 
-		OrderCancelVolumeRequireTypes? IMessageAdapter.OrderCancelVolumeRequired => InnerAdapter.OrderCancelVolumeRequired;
+		/// <inheritdoc />
+		public virtual bool IsSupportCandlesUpdates => InnerAdapter.IsSupportCandlesUpdates;
+
+		/// <inheritdoc />
+		public virtual MessageAdapterCategories Categories => InnerAdapter.Categories;
+
+		/// <inheritdoc />
+		public virtual OrderCancelVolumeRequireTypes? OrderCancelVolumeRequired => InnerAdapter.OrderCancelVolumeRequired;
 
 		/// <inheritdoc />
 		public string AssociatedBoardCode => InnerAdapter.AssociatedBoardCode;
@@ -251,6 +272,12 @@ namespace StockSharp.Messages
 		IOrderLogMarketDepthBuilder IMessageAdapter.CreateOrderLogMarketDepthBuilder(SecurityId securityId)
 		{
 			return InnerAdapter.CreateOrderLogMarketDepthBuilder(securityId);
+		}
+
+		/// <inheritdoc />
+		public virtual IEnumerable<TimeSpan> GetTimeFrames(SecurityId securityId)
+		{
+			return InnerAdapter.GetTimeFrames(securityId);
 		}
 
 		/// <summary>

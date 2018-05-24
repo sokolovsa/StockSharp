@@ -450,6 +450,48 @@ namespace StockSharp.Algo.Testing
 			}
 		}
 
+		private bool _checkTradingState;
+
+		/// <summary>
+		/// Check trading state.
+		/// </summary>
+		[Display(
+			ResourceType = typeof(LocalizedStrings),
+			Name = LocalizedStrings.SessionStateKey,
+			Description = LocalizedStrings.CheckTradingStateKey,
+			GroupName = LocalizedStrings.Str1175Key,
+			Order = 217)]
+		public bool CheckTradingState
+		{
+			get => _checkTradingState;
+			set
+			{
+				_checkTradingState = value;
+				NotifyChanged(nameof(CheckTradingState));
+			}
+		}
+
+		private bool _checkMoney;
+
+		/// <summary>
+		/// Check money balance.
+		/// </summary>
+		[Display(
+			ResourceType = typeof(LocalizedStrings),
+			Name = LocalizedStrings.Str1543Key,
+			Description = LocalizedStrings.CheckMoneyKey,
+			GroupName = LocalizedStrings.Str1175Key,
+			Order = 218)]
+		public bool CheckMoney
+		{
+			get => _checkMoney;
+			set
+			{
+				_checkMoney = value;
+				NotifyChanged(nameof(CheckMoney));
+			}
+		}
+
 		/// <summary>
 		/// To save the state of paper trading parameters.
 		/// </summary>
@@ -473,6 +515,8 @@ namespace StockSharp.Algo.Testing
 			storage.SetValue(nameof(ConvertTime), ConvertTime);
 			storage.SetValue(nameof(PriceLimitOffset), PriceLimitOffset);
 			storage.SetValue(nameof(IncreaseDepthVolume), IncreaseDepthVolume);
+			storage.SetValue(nameof(CheckTradingState), CheckTradingState);
+			storage.SetValue(nameof(CheckMoney), CheckMoney);
 
 			if (TimeZone != null)
 				storage.SetValue(nameof(TimeZone), TimeZone);
@@ -501,6 +545,8 @@ namespace StockSharp.Algo.Testing
 			ConvertTime = storage.GetValue(nameof(ConvertTime), ConvertTime);
 			PriceLimitOffset = storage.GetValue(nameof(PriceLimitOffset), PriceLimitOffset);
 			IncreaseDepthVolume = storage.GetValue(nameof(IncreaseDepthVolume), IncreaseDepthVolume);
+			CheckTradingState = storage.GetValue(nameof(CheckTradingState), CheckTradingState);
+			CheckMoney = storage.GetValue(nameof(CheckMoney), CheckMoney);
 
 			if (storage.Contains(nameof(TimeZone)))
 				TimeZone = storage.GetValue<TimeZoneInfo>(nameof(TimeZone));

@@ -3,15 +3,19 @@ namespace SampleGdax
 	using System;
 	using System.Linq;
 	using System.Windows;
+	using System.Windows.Controls;
 
 	using Ecng.Collections;
 	using Ecng.Xaml;
 
 	using MoreLinq;
 
+	using StockSharp.Algo.Candles;
 	using StockSharp.BusinessEntities;
+	using StockSharp.Gdax;
 	using StockSharp.Xaml;
 	using StockSharp.Localization;
+	using StockSharp.Messages;
 
 	public partial class SecuritiesWindow
 	{
@@ -21,6 +25,9 @@ namespace SampleGdax
 		public SecuritiesWindow()
 		{
 			InitializeComponent();
+
+			CandlesPeriods.ItemsSource = GdaxMessageAdapter.AllTimeFrames;
+			CandlesPeriods.SelectedIndex = 1;
 		}
 
 		protected override void OnClosed(EventArgs e)
@@ -43,7 +50,9 @@ namespace SampleGdax
 
 		private void SecurityPicker_OnSecuritySelected(Security security)
 		{
-			Quotes.IsEnabled = NewOrder.IsEnabled = Depth.IsEnabled = OrderLog.IsEnabled = security != null;
+			Quotes.IsEnabled = NewOrder.IsEnabled = NewStopOrder.IsEnabled = Depth.IsEnabled = OrderLog.IsEnabled = security != null;
+
+			TryEnableCandles();
 		}
 
 		private void NewOrderClick(object sender, RoutedEventArgs e)
@@ -60,6 +69,46 @@ namespace SampleGdax
 				MainWindow.Instance.Trader.RegisterOrder(newOrder.Order);
 		}
 
+		private void NewStopOrderClick(object sender, RoutedEventArgs e)
+		{
+			var newOrder = new OrderConditionalWindow
+			{
+				Order = new Order
+				{
+					Security = SecurityPicker.SelectedSecurity,
+					Type = OrderTypes.Conditional,
+				},
+				SecurityProvider = MainWindow.Instance.Trader,
+				MarketDataProvider = MainWindow.Instance.Trader,
+				Portfolios = new PortfolioDataSource(MainWindow.Instance.Trader),
+				Adapter = MainWindow.Instance.Trader.TransactionAdapter
+			};
+
+			if (newOrder.ShowModal(this))
+				MainWindow.Instance.Trader.RegisterOrder(newOrder.Order);
+		}
+
+		private void CandlesClick(object sender, RoutedEventArgs e)
+		{
+			foreach (var security in SecurityPicker.SelectedSecurities)
+			{
+				var tf = (TimeSpan)CandlesPeriods.SelectedItem;
+				var series = new CandleSeries(typeof(TimeFrameCandle), security, tf);
+
+				new ChartWindow(series, tf.Ticks == 1 ? DateTime.Today : DateTime.Now.Subtract(TimeSpan.FromTicks(tf.Ticks * 100)), DateTime.Now).Show();
+			}
+		}
+
+		private void CandlesPeriods_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			TryEnableCandles();
+		}
+
+		private void TryEnableCandles()
+		{
+			Candles.IsEnabled = CandlesPeriods.SelectedItem != null && SecurityPicker.SelectedSecurity != null;
+		}
+
 		private void DepthClick(object sender, RoutedEventArgs e)
 		{
 			var trader = MainWindow.Instance.Trader;
@@ -68,10 +117,10 @@ namespace SampleGdax
 			{
 				var window = _quotesWindows.SafeAdd(security, s =>
 				{
-					// начинаем получать котировки стакана
+					// subscribe on order book flow
 					trader.RegisterMarketDepth(security);
 
-					// создаем окно со стаканом
+					// create order book window
 					var wnd = new QuotesWindow
 					{
 						Title = security.Id + " " + LocalizedStrings.MarketDepth

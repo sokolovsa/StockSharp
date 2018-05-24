@@ -102,8 +102,8 @@
     <Compile Include="IOrderLogMarketDepthBuilder.cs" />
     <Compile Include="MessagePriorityQueue.cs" />
     <Compile Include="ReConnectionSettings.cs" />
+    <Compile Include="RemoveMessage.cs" />
     <Compile Include="ResetMessage.cs" />
-    <Compile Include="TargetPlatformAttribute.cs" />
     <Compile Include="IMessageChannel.cs" />
     <Compile Include="MainCategoryAttribute.cs" />
     <Compile Include="BaseChangeMessage.cs" />
@@ -144,11 +144,13 @@
     <Compile Include="SecurityTypes.cs" />
     <Compile Include="SessionMessage.cs" />
     <Compile Include="Sides.cs" />
+    <Compile Include="MessageAdapterCategories.cs" />
     <Compile Include="TimeInForce.cs" />
     <Compile Include="TimeMessage.cs" />
     <Compile Include="TPlusLimits.cs" />
     <Compile Include="Unit.cs" />
     <Compile Include="CandleMessageVolumeProfile.cs" />
+    <Compile Include="WithdrawInfo.cs" />
     <Compile Include="WorkingTime.cs" />
     <Compile Include="WorkingTimePeriod.cs" />
   </ItemGroup>

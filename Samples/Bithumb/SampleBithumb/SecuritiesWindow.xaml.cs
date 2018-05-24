@@ -12,6 +12,7 @@ namespace SampleBithumb
 	using StockSharp.BusinessEntities;
 	using StockSharp.Xaml;
 	using StockSharp.Localization;
+	using StockSharp.Messages;
 
 	public partial class SecuritiesWindow
 	{
@@ -43,7 +44,7 @@ namespace SampleBithumb
 
 		private void SecurityPicker_OnSecuritySelected(Security security)
 		{
-			Quotes.IsEnabled = NewOrder.IsEnabled = Depth.IsEnabled = security != null;
+			Quotes.IsEnabled = NewOrder.IsEnabled = NewStopOrder.IsEnabled = Depth.IsEnabled = security != null;
 		}
 
 		private void NewOrderClick(object sender, RoutedEventArgs e)
@@ -60,6 +61,25 @@ namespace SampleBithumb
 				MainWindow.Instance.Trader.RegisterOrder(newOrder.Order);
 		}
 
+		private void NewStopOrderClick(object sender, RoutedEventArgs e)
+		{
+			var newOrder = new OrderConditionalWindow
+			{
+				Order = new Order
+				{
+					Security = SecurityPicker.SelectedSecurity,
+					Type = OrderTypes.Conditional,
+				},
+				SecurityProvider = MainWindow.Instance.Trader,
+				MarketDataProvider = MainWindow.Instance.Trader,
+				Portfolios = new PortfolioDataSource(MainWindow.Instance.Trader),
+				Adapter = MainWindow.Instance.Trader.TransactionAdapter
+			};
+
+			if (newOrder.ShowModal(this))
+				MainWindow.Instance.Trader.RegisterOrder(newOrder.Order);
+		}
+
 		private void DepthClick(object sender, RoutedEventArgs e)
 		{
 			var trader = MainWindow.Instance.Trader;
@@ -68,10 +88,10 @@ namespace SampleBithumb
 			{
 				var window = _quotesWindows.SafeAdd(security, s =>
 				{
-					// начинаем получать котировки стакана
+					// subscribe on order book flow
 					trader.RegisterMarketDepth(security);
 
-					// создаем окно со стаканом
+					// create order book window
 					var wnd = new QuotesWindow
 					{
 						Title = security.Id + " " + LocalizedStrings.MarketDepth

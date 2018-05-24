@@ -17,7 +17,6 @@ namespace StockSharp.Algo
 {
 	using System;
 
-	using Ecng.Collections;
 	using Ecng.Common;
 
 	using StockSharp.BusinessEntities;
@@ -64,32 +63,6 @@ namespace StockSharp.Algo
 				throw new ArgumentException(LocalizedStrings.Str905Params.Put(security.Id));
 
 			return security;
-		}
-
-		public static int ChangeSubscribers<T>(this CachedSynchronizedDictionary<T, int> subscribers, T subscriber, bool isSubscribe)
-		{
-			if (subscribers == null)
-				throw new ArgumentNullException(nameof(subscribers));
-
-			lock (subscribers.SyncRoot)
-			{
-				var value = subscribers.TryGetValue2(subscriber) ?? 0;
-
-				if (isSubscribe)
-					value++;
-				else
-				{
-					if (value > 0)
-						value--;
-				}
-
-				if (value > 0)
-					subscribers[subscriber] = value;
-				else
-					subscribers.Remove(subscriber);
-
-				return value;
-			}
 		}
 
 		public static long GetTradeId(this ExecutionMessage message)
@@ -222,12 +195,23 @@ namespace StockSharp.Algo
 			}
 		}
 
-		public static Tuple<MarketDataTypes, SecurityId, object, DateTimeOffset?, DateTimeOffset?, long?, int?> CreateKey(this MarketDataMessage message, SecurityId? securityId = null)
+		public class SubscriptionKey : Tuple<MarketDataTypes, SecurityId, object, int?, Tuple<DateTimeOffset?, DateTimeOffset?, long?>>
+		{
+			public SubscriptionKey(MarketDataTypes item1, SecurityId item2, object item3, int? item4, Tuple<DateTimeOffset?, DateTimeOffset?, long?> item5)
+				: base(item1, item2, item3, item4, item5)
+			{
+			}
+		}
+
+		public static SubscriptionKey CreateKey(this MarketDataMessage message, SecurityId? securityId = null)
 		{
 			if (message == null)
 				throw new ArgumentNullException(nameof(message));
 
-			return Tuple.Create(message.DataType, securityId ?? message.SecurityId, message.Arg, message.From, message.To, message.Count, message.MaxDepth);
+			var isRealTime = message.To == null;
+			var range = isRealTime ? null : Tuple.Create(message.From, message.To, message.Count);
+
+			return new SubscriptionKey(message.DataType, securityId ?? message.SecurityId, message.Arg, message.MaxDepth, range);
 		}
 
 		public static bool NotRequiredSecurityId(this SecurityMessage secMsg)

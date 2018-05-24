@@ -173,8 +173,8 @@ F:StockSharp.Xaml.Diagram.DiagramEditorControl.ScaleProperty/summary;DocStr29
 P:StockSharp.Xaml.Diagram.DiagramEditorControl.Scale/summary;Str2053
 E:StockSharp.Xaml.Diagram.DiagramEditorControl.SelectionChanged/summary;DocStr7965
 E:StockSharp.Xaml.Diagram.DiagramEditorControl.ElementDoubleClicked/summary;DocStr7966
-P:StockSharp.Xaml.Diagram.DiagramEditorControl.SelectedElements/summary;DocStr7967
-P:StockSharp.Xaml.Diagram.DiagramEditorControl.SelectedElement/summary;DocStr7968
+P:StockSharp.Xaml.Diagram.DiagramEditorControl.SelectedElements/summary;SelectedElements
+P:StockSharp.Xaml.Diagram.DiagramEditorControl.SelectedElement/summary;SelectedElement
 P:StockSharp.Xaml.Diagram.DiagramEditorControl.IndicatorTypes/summary;DocStr7740
 M:StockSharp.Xaml.Diagram.DiagramEditorControl.#ctor/summary;DocStr1
 M:StockSharp.Xaml.Diagram.DiagramEditorControl.GetSelectionCopyElement/summary;DocStr7962
@@ -426,6 +426,7 @@ P:StockSharp.Xaml.Diagram.PaletteTreeItem.ParentId/summary;DocStr10182
 P:StockSharp.Xaml.Diagram.PaletteTreeItem.Name/summary;Name2
 P:StockSharp.Xaml.Diagram.PaletteTreeItem.Element/summary;DocStr7867
 P:StockSharp.Xaml.Diagram.PaletteTreeItem.IsExpanded/summary;DocStr10184
+P:StockSharp.Xaml.Diagram.PaletteTreeItem.Icon/summary;DocStr7908
 E:StockSharp.Xaml.Diagram.PaletteTreeItem.ParentChanged/summary;DocStr10185
 E:StockSharp.Xaml.Diagram.PaletteTreeItem.Changed/summary;DocStr10186
 M:StockSharp.Xaml.Diagram.PaletteTreeItem.Load(Ecng.Serialization.SettingsStorage)/summary;DocStr2
@@ -654,7 +655,7 @@ M:StockSharp.Xaml.Diagram.Elements.MarketDepthGroupedDiagramElement.#ctor/summar
 T:StockSharp.Xaml.Diagram.Elements.Level1DiagramElement/summary;DocStr9273
 P:StockSharp.Xaml.Diagram.Elements.Level1DiagramElement.TypeId/summary;DocStr7902
 P:StockSharp.Xaml.Diagram.Elements.Level1DiagramElement.IconName/summary;DocStr9214
-P:StockSharp.Xaml.Diagram.Elements.Level1DiagramElement.ValueType/summary;DocStr9731
+P:StockSharp.Xaml.Diagram.Elements.Level1DiagramElement.ValueType/summary;Level1Field
 M:StockSharp.Xaml.Diagram.Elements.Level1DiagramElement.#ctor/summary;DocStr1
 M:StockSharp.Xaml.Diagram.Elements.Level1DiagramElement.OnStart/summary;DocStr7892
 M:StockSharp.Xaml.Diagram.Elements.Level1DiagramElement.OnStop/summary;DocStr7894
@@ -666,6 +667,7 @@ T:StockSharp.Xaml.Diagram.Elements.CandleSourceDiagramElement/summary;Str3071
 P:StockSharp.Xaml.Diagram.Elements.CandleSourceDiagramElement.Series/summary;CandlesSeries
 P:StockSharp.Xaml.Diagram.Elements.CandleSourceDiagramElement.IsFinal/summary;ProcessOnlyFormed
 P:StockSharp.Xaml.Diagram.Elements.CandleSourceDiagramElement.IsCalcVolumeProfile/summary;DocStr2053
+P:StockSharp.Xaml.Diagram.Elements.CandleSourceDiagramElement.IsRegularTradingHours/summary;RegularTradingHours
 M:StockSharp.Xaml.Diagram.Elements.CandleSourceDiagramElement.#ctor/summary;DocStr1
 P:StockSharp.Xaml.Diagram.Elements.CandleSourceDiagramElement.TypeId/summary;DocStr7902
 P:StockSharp.Xaml.Diagram.Elements.CandleSourceDiagramElement.IconName/summary;DocStr9214

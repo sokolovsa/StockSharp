@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="ea1dbc04-3c29-4fbe-91b0-260d1ded31ae" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+    	<para>
+     		Для написания торговых роботов под торговую платформу <token>Yobit</token> необходимо использовать
+			<codeEntityReference qualifyHint="false">T:StockSharp.Yobit.YobitTrader</codeEntityReference>.
+		</para>
+     </introduction>
+     <relatedTopics>
+    	<link xlink:href="cccadabe-b3fa-4afa-badd-ca0a1633ca2d"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

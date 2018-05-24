@@ -70,6 +70,7 @@ namespace StockSharp.Messages
 		/// <summary>
 		/// Order error (registration or cancel).
 		/// </summary>
+		[Obsolete]
 		OrderError,
 
 		/// <summary>
@@ -213,5 +214,10 @@ namespace StockSharp.Messages
 		/// Market data request finished.
 		/// </summary>
 		MarketDataFinished,
+
+		/// <summary>
+		/// Remove object request (security, portfolio etc.).
+		/// </summary>
+		Remove,
 	}
 }

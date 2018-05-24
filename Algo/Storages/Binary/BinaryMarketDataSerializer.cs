@@ -56,6 +56,7 @@ namespace StockSharp.Algo.Storages.Binary
 		public static readonly Version Version59 = new Version(5, 9);
 		public static readonly Version Version60 = new Version(6, 0);
 		public static readonly Version Version61 = new Version(6, 1);
+		public static readonly Version Version62 = new Version(6, 2);
 	}
 
 	abstract class BinaryMetaInfo : MetaInfo
@@ -472,7 +473,7 @@ namespace StockSharp.Algo.Storages.Binary
 		protected void WriteItemLocalTime(BitArrayWriter writer, TMetaInfo metaInfo, Message message, bool isTickPrecision)
 		{
 			var lastLocalOffset = metaInfo.LastItemLocalOffset;
-			metaInfo.LastItemLocalTime = writer.WriteTime(message.LocalTime, metaInfo.LastItemLocalTime, "local time", true, true, metaInfo.LocalOffset, true, isTickPrecision, ref lastLocalOffset);
+			metaInfo.LastItemLocalTime = writer.WriteTime(message.LocalTime, metaInfo.LastItemLocalTime, "local time", true, true, metaInfo.LocalOffset, true, isTickPrecision, ref lastLocalOffset, true);
 			metaInfo.LastItemLocalOffset = lastLocalOffset;
 		}
 

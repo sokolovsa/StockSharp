@@ -72,7 +72,10 @@ namespace StockSharp.Algo
 			public void ProcessRequest(Security security, MarketDataMessage message, bool tryAdd)
 			{
 				if (security == null)
-					throw new ArgumentNullException(nameof(security));
+				{
+					if (message.DataType != MarketDataTypes.News)
+						throw new ArgumentNullException(nameof(security));
+				}
 
 				if (message == null)
 					throw new ArgumentNullException(nameof(message));
@@ -80,7 +83,8 @@ namespace StockSharp.Algo
 				if (message.TransactionId == 0)
 					message.TransactionId = _connector.TransactionIdGenerator.GetNextId();
 
-				message.FillSecurityInfo(_connector, security);
+				if (security != null)
+					message.FillSecurityInfo(_connector, security);
 
 				var value = Tuple.Create((MarketDataMessage)message.Clone(), security);
 
@@ -138,24 +142,27 @@ namespace StockSharp.Algo
 				var subscriber = tuple.Item2;
 				message = tuple.Item1;
 
-				lock (_subscribers.SyncRoot)
+				if (message.DataType != MarketDataTypes.News)
 				{
-					if (message.IsSubscribe)
-						_subscribers.SafeAdd(message.DataType).Add(subscriber);
-					else
+					lock (_subscribers.SyncRoot)
 					{
-						var dict = _subscribers.TryGetValue(message.DataType);
-
-						if (dict != null)
+						if (message.IsSubscribe)
+							_subscribers.SafeAdd(message.DataType).Add(subscriber);
+						else
 						{
-							dict.Remove(subscriber);
+							var dict = _subscribers.TryGetValue(message.DataType);
 
-							if (dict.Count == 0)
-								_subscribers.Remove(message.DataType);
+							if (dict != null)
+							{
+								dict.Remove(subscriber);
+
+								if (dict.Count == 0)
+									_subscribers.Remove(message.DataType);
+							}
 						}
 					}
 				}
-
+				
 				return subscriber;
 			}
 		}
@@ -186,13 +193,18 @@ namespace StockSharp.Algo
 		public IEnumerable<Portfolio> RegisteredPortfolios => _subscriptionManager.RegisteredPortfolios;
 
 		/// <summary>
+		/// List of all candles series, subscribed via <see cref="SubscribeCandles"/>.
+		/// </summary>
+		public IEnumerable<CandleSeries> SubscribedCandleSeries => _entityCache.AllCandleSeries;
+
+		/// <summary>
 		/// To sign up to get market data by the instrument.
 		/// </summary>
 		/// <param name="security">The instrument by which new information getting should be started.</param>
 		/// <param name="message">The message that contain subscribe info.</param>
 		public virtual void SubscribeMarketData(Security security, MarketDataMessage message)
 		{
-			var msg = LocalizedStrings.SubscriptionSent.Put(security.Id,
+			var msg = LocalizedStrings.SubscriptionSent.Put(security?.Id,
 				message.DataType + (message.DataType.IsCandleDataType() ? " " + message.Arg : string.Empty));
 
 			if (message.From != null && message.To != null)
@@ -210,7 +222,7 @@ namespace StockSharp.Algo
 		/// <param name="message">The message that contain unsubscribe info.</param>
 		public virtual void UnSubscribeMarketData(Security security, MarketDataMessage message)
 		{
-			var msg = LocalizedStrings.UnSubscriptionSent.Put(security.Id,
+			var msg = LocalizedStrings.UnSubscriptionSent.Put(security?.Id,
 				message.DataType + (message.DataType.IsCandleDataType() ? " " + message.Arg : string.Empty));
 
 			if (message.From != null && message.To != null)
@@ -402,12 +414,7 @@ namespace StockSharp.Algo
 		/// </summary>
 		protected virtual void OnRegisterNews()
 		{
-			SendInMessage(new MarketDataMessage
-			{
-				TransactionId = TransactionIdGenerator.GetNextId(),
-				DataType = MarketDataTypes.News,
-				IsSubscribe = true
-			});
+			SubscribeMarketData(null, MarketDataTypes.News);
 		}
 
 		/// <summary>
@@ -419,7 +426,7 @@ namespace StockSharp.Algo
 		}
 
 		/// <summary>
-		/// Request news <see cref="BusinessEntities.News.Story"/> body. After receiving the event <see cref="Connector.NewsChanged"/> will be triggered.
+		/// Request news <see cref="BusinessEntities.News.Story"/> body. After receiving the event <see cref="NewsChanged"/> will be triggered.
 		/// </summary>
 		/// <param name="news">News.</param>
 		public virtual void RequestNewsStory(News news)
@@ -427,7 +434,7 @@ namespace StockSharp.Algo
 			if (news == null)
 				throw new ArgumentNullException(nameof(news));
 
-			SendInMessage(new MarketDataMessage
+			SubscribeMarketData(null, new MarketDataMessage
 			{
 				TransactionId = TransactionIdGenerator.GetNextId(),
 				DataType = MarketDataTypes.News,
@@ -441,12 +448,7 @@ namespace StockSharp.Algo
 		/// </summary>
 		protected virtual void OnUnRegisterNews()
 		{
-			SendInMessage(new MarketDataMessage
-			{
-				TransactionId = TransactionIdGenerator.GetNextId(),
-				DataType = MarketDataTypes.News,
-				IsSubscribe = false
-			});
+			UnSubscribeMarketData(null, MarketDataTypes.News);
 		}
 
 		/// <summary>
@@ -479,11 +481,14 @@ namespace StockSharp.Algo
 		/// <param name="series">Candles series.</param>
 		public virtual void UnSubscribeCandles(CandleSeries series)
 		{
-			var mdMsg = _entityCache.TryGetCandleSeriesMarketDataMessage(series, TransactionIdGenerator.GetNextId);
+			var originalTransId = _entityCache.TryGetTransactionId(series);
 
-			if (mdMsg == null)
+			if (originalTransId == 0)
 				return;
 
+			var mdMsg = series.ToMarketDataMessage(false);
+			mdMsg.TransactionId = TransactionIdGenerator.GetNextId();
+			mdMsg.OriginalTransactionId = originalTransId;
 			UnSubscribeMarketData(series.Security, mdMsg);
 		}
 	}

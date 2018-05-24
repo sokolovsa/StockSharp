@@ -1,4 +1,5 @@
 T:StockSharp.Gdax.GdaxMessageAdapter/summary;DocStr2538
+P:StockSharp.Gdax.GdaxMessageAdapter.AllTimeFrames/summary;DocStr206
 P:StockSharp.Gdax.GdaxMessageAdapter.Key/summary;Str3304
 P:StockSharp.Gdax.GdaxMessageAdapter.Secret/summary;DocStr3146
 P:StockSharp.Gdax.GdaxMessageAdapter.Passphrase/summary;Passphrase
@@ -14,6 +15,8 @@ M:StockSharp.Gdax.GdaxMessageAdapter.OnSendInMessage(StockSharp.Messages.Message
 T:StockSharp.Gdax.GdaxOrderCondition/summary;DocStr60
 M:StockSharp.Gdax.GdaxOrderCondition.#ctor/summary;DocStr1
 P:StockSharp.Gdax.GdaxOrderCondition.StopPrice/summary;Str3460
+P:StockSharp.Gdax.GdaxOrderCondition.IsWithdraw/summary;Withdraw
+P:StockSharp.Gdax.GdaxOrderCondition.WithdrawInfo/summary;WithdrawInfo
 T:StockSharp.Gdax.GdaxTrader/summary;DocStr2539
 M:StockSharp.Gdax.GdaxTrader.#ctor/summary;DocStr1
 P:StockSharp.Gdax.GdaxTrader.Key/summary;Str3304

@@ -18,7 +18,6 @@ namespace SampleChart
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
-	using System.Diagnostics;
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
@@ -63,6 +62,7 @@ namespace SampleChart
 		private ICandleBuilder _candleBuilder;
 		private MarketDataMessage _mdMsg;
 		private readonly ICandleBuilderValueTransform _candleTransform = new TickCandleBuilderValueTransform();
+		private readonly CandlesHolder _holder = new CandlesHolder();
 		private bool _historyLoaded;
 		private bool _isRealTime;
 		private DateTimeOffset _lastTime;
@@ -76,6 +76,9 @@ namespace SampleChart
 
 		private DateTime _lastRealtimeUpdateTime;
 		private DateTime _lastDrawTime;
+
+		private readonly IdGenerator _transactionIdGenerator = new IncrementalIdGenerator();
+		private long _transactionId;
 
 		public MainWindow()
 		{
@@ -148,7 +151,7 @@ namespace SampleChart
 				foreach (var candle in _allCandles.CachedValues)
 					chartData.Group(candle.OpenTime).Add(element, indicator.Process(candle));
 
-				Chart.Reset(new [] {element});
+				Chart.Reset(new[] { element });
 				Chart.Draw(chartData);
 
 				_indicators[element] = indicator;
@@ -192,8 +195,8 @@ namespace SampleChart
 				_security = new Security
 				{
 					Id = id.ToStringId(),
-					PriceStep = id.SecurityCode.StartsWith("RI", StringComparison.InvariantCultureIgnoreCase) ? 10 : 
-						id.SecurityCode.Contains("ES") ? 0.25m : 
+					PriceStep = id.SecurityCode.StartsWith("RI", StringComparison.InvariantCultureIgnoreCase) ? 10 :
+						id.SecurityCode.Contains("ES") ? 0.25m :
 						0.01m,
 					Board = ExchangeBoard.Associated
 				};
@@ -229,8 +232,14 @@ namespace SampleChart
 
 		private void LoadData(CandleSeries series)
 		{
+			var msgType = series.CandleType.ToCandleMessageType();
+
+			_transactionId = _transactionIdGenerator.GetNextId();
+			_holder.Clear();
+			_holder.CreateCandleSeries(_transactionId, series);
+
 			_candleTransform.Process(new ResetMessage());
-			_candleBuilder = series.CandleType.ToCandleMessageType().ToCandleMarketDataType().CreateCandleBuilder();
+			_candleBuilder = msgType.ToCandleMarketDataType().CreateCandleBuilder(_exchangeInfoProvider);
 
 			var storage = new StorageRegistry();
 
@@ -285,7 +294,7 @@ namespace SampleChart
 				}
 				else
 				{
-					foreach (var candleMsg in storage.GetCandleMessageStorage(series.CandleType.ToCandleMessageType(), series.Security, series.Arg, new LocalMarketDataDrive(path), format).Load())
+					foreach (var candleMsg in storage.GetCandleMessageStorage(msgType, series.Security, series.Arg, new LocalMarketDataDrive(path), format).Load())
 					{
 						if (candleMsg.State != CandleStates.Finished)
 							candleMsg.State = CandleStates.Finished;
@@ -336,7 +345,7 @@ namespace SampleChart
 
 		private static void DoIfTime(Action action, DateTime now, ref DateTime lastExecutTime, TimeSpan period)
 		{
-			if(now - lastExecutTime < period)
+			if (now - lastExecutTime < period)
 				return;
 
 			lastExecutTime = now;
@@ -347,8 +356,9 @@ namespace SampleChart
 		{
 			lock (_timerLock)
 			{
-				if(_isInTimerHandler)
+				if (_isInTimerHandler)
 					return;
+
 				_isInTimerHandler = true;
 			}
 
@@ -391,21 +401,19 @@ namespace SampleChart
 					}
 				}
 			}
-				
+
 			_lastTime += TimeSpan.FromSeconds(RandomGen.GetInt(1, 10));
 		}
 
 		private void DrawChartElements()
 		{
-			var candlesToUpdate = new List<Candle>();
-			CandleMessage[] messages = null;
+			var messages = _updatedCandles.SyncGet(uc => uc.CopyAndClear());
 
-			_updatedCandles.SyncDo(uc => messages = uc.CopyAndClear());
-
-			if(messages.Length == 0)
+			if (messages.Length == 0)
 				return;
 
 			var lastTime = DateTimeOffset.MinValue;
+			var candlesToUpdate = new List<Candle>();
 
 			foreach (var message in messages.Reverse())
 			{
@@ -414,7 +422,13 @@ namespace SampleChart
 
 				lastTime = message.OpenTime;
 
-				candlesToUpdate.Add(message.ToCandle(_security));
+				message.OriginalTransactionId = _transactionId;
+
+				if (_holder.UpdateCandle(message, out var candle) != null)
+				{
+					if (candlesToUpdate.Count == 0 || candlesToUpdate.Last() != candle)
+						candlesToUpdate.Add(candle);
+				}
 			}
 
 			candlesToUpdate.Reverse();

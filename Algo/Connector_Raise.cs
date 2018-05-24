@@ -350,6 +350,8 @@ namespace StockSharp.Algo
 
 		private void RaiseNewMyTrade(MyTrade trade)
 		{
+			this.AddInfoLog("New own trade: {0}", trade);
+
 			NewMyTrade?.Invoke(trade);
 			NewMyTrades?.Invoke(new[] { trade });
 		}
@@ -390,16 +392,6 @@ namespace StockSharp.Algo
 		{
 			StopOrderChanged?.Invoke(stopOrder);
 			StopOrdersChanged?.Invoke(new[] { stopOrder });
-		}
-
-		private void RaiseStopOrdersChanged(IEnumerable<Order> stopOrders)
-		{
-			foreach (var stopOrder in stopOrders)
-			{
-				StopOrderChanged?.Invoke(stopOrder);
-			}
-
-			StopOrdersChanged?.Invoke(stopOrders);
 		}
 
 		private void RaiseOrderRegisterFailed(OrderFail fail)
@@ -648,7 +640,7 @@ namespace StockSharp.Algo
 
 		private void RaiseMarketDataSubscriptionSucceeded(Security security, MarketDataMessage message)
 		{
-			var msg = LocalizedStrings.SubscribedOk.Put(security.Id,
+			var msg = LocalizedStrings.SubscribedOk.Put(security?.Id,
 				message.DataType + (message.DataType.IsCandleDataType() ? " " + message.Arg : string.Empty));
 
 			if (message.From != null && message.To != null)
@@ -661,13 +653,13 @@ namespace StockSharp.Algo
 
 		private void RaiseMarketDataSubscriptionFailed(Security security, MarketDataMessage message, Exception error)
 		{
-			this.AddErrorLog(LocalizedStrings.SubscribedError, security.Id, message.DataType, message.Error);
+			this.AddErrorLog(LocalizedStrings.SubscribedError, security?.Id, message.DataType, message.Error);
 			MarketDataSubscriptionFailed?.Invoke(security, message, error);
 		}
 
 		private void RaiseMarketDataUnSubscriptionSucceeded(Security security, MarketDataMessage message)
 		{
-			var msg = LocalizedStrings.UnSubscribedOk.Put(security.Id,
+			var msg = LocalizedStrings.UnSubscribedOk.Put(security?.Id,
 				message.DataType + (message.DataType.IsCandleDataType() ? " " + message.Arg : string.Empty));
 
 			if (message.From != null && message.To != null)
@@ -680,7 +672,7 @@ namespace StockSharp.Algo
 
 		private void RaiseMarketDataUnSubscriptionFailed(Security security, MarketDataMessage message, Exception error)
 		{
-			this.AddErrorLog(LocalizedStrings.UnSubscribedError, security.Id, message.DataType, message.Error);
+			this.AddErrorLog(LocalizedStrings.UnSubscribedError, security?.Id, message.DataType, message.Error);
 			MarketDataUnSubscriptionFailed?.Invoke(security, message, error);
 		}
 
