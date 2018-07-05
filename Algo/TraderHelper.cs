@@ -2213,10 +2213,7 @@ namespace StockSharp.Algo
 
 			public NativePositionManager(Position position)
 			{
-				if (position == null)
-					throw new ArgumentNullException(nameof(position));
-
-				_position = position;
+				_position = position ?? throw new ArgumentNullException(nameof(position));
 			}
 
 			/// <summary>
@@ -2638,6 +2635,12 @@ namespace StockSharp.Algo
 							break;
 						case Level1Fields.Turnover:
 							security.Turnover = (decimal)value;
+							break;
+						case Level1Fields.BuyBackPrice:
+							security.BuyBackPrice = (decimal)value;
+							break;
+						case Level1Fields.BuyBackDate:
+							security.BuyBackDate = (DateTimeOffset)value;
 							break;
 						//default:
 						//	throw new ArgumentOutOfRangeException();
@@ -3539,12 +3542,12 @@ namespace StockSharp.Algo
 		/// <summary>
 		/// Lookup all securities predefined criteria.
 		/// </summary>
-		public static readonly Security LookupAllCriteria = new Security { Code = "*" };
+		public static readonly Security LookupAllCriteria = new Security();
 
 		/// <summary>
 		/// Lookup all securities predefined criteria.
 		/// </summary>
-		public static readonly SecurityLookupMessage LookupAllCriteriaMessage = new SecurityLookupMessage { SecurityId = new SecurityId { SecurityCode = "*" } };
+		public static readonly SecurityLookupMessage LookupAllCriteriaMessage = LookupAllCriteria.ToLookupMessage();
 
 		/// <summary>
 		/// Determine the <paramref name="criteria"/> contains lookup all filter.
@@ -3561,7 +3564,7 @@ namespace StockSharp.Algo
 
 			return
 				criteria.Id.IsEmpty() &&
-				criteria.Code == "*" &&
+				criteria.Code.IsEmpty() &&
 				criteria.Type == null;
 		}
 
@@ -3579,7 +3582,7 @@ namespace StockSharp.Algo
 				return true;
 
 			return
-				criteria.SecurityId.SecurityCode == "*" &&
+				criteria.SecurityId.IsDefault() &&
 				criteria.SecurityType == null;
 		}
 
@@ -3952,10 +3955,7 @@ namespace StockSharp.Algo
 
 				public TickEnumerator(IEnumerator<Level1ChangeMessage> level1Enumerator)
 				{
-					if (level1Enumerator == null)
-						throw new ArgumentNullException(nameof(level1Enumerator));
-
-					_level1Enumerator = level1Enumerator;
+					_level1Enumerator = level1Enumerator ?? throw new ArgumentNullException(nameof(level1Enumerator));
 				}
 
 				public ExecutionMessage Current { get; private set; }
@@ -4066,10 +4066,7 @@ namespace StockSharp.Algo
 
 				public OrderBookEnumerator(IEnumerator<Level1ChangeMessage> level1Enumerator)
 				{
-					if (level1Enumerator == null)
-						throw new ArgumentNullException(nameof(level1Enumerator));
-
-					_level1Enumerator = level1Enumerator;
+					_level1Enumerator = level1Enumerator ?? throw new ArgumentNullException(nameof(level1Enumerator));
 				}
 
 				public QuoteChangeMessage Current { get; private set; }
@@ -4531,8 +4528,8 @@ namespace StockSharp.Algo
 				ServerTime = message.ServerTime,
 			}
 			.TryAdd(Level1Fields.LastTradeId, message.TradeId)
-			.TryAdd(Level1Fields.LastTradePrice, message.TradePrice, false)
-			.TryAdd(Level1Fields.LastTradeVolume, message.TradeVolume, false)
+			.TryAdd(Level1Fields.LastTradePrice, message.TradePrice)
+			.TryAdd(Level1Fields.LastTradeVolume, message.TradeVolume)
 			.TryAdd(Level1Fields.OpenInterest, message.OpenInterest, true)
 			.TryAdd(Level1Fields.LastTradeOrigin, message.OriginSide);
 
@@ -4564,6 +4561,53 @@ namespace StockSharp.Algo
 				throw new ArgumentNullException(nameof(board));
 
 			return securityId.BoardCode.CompareIgnoreCase(board.Code);
+		}
+
+		/// <summary>
+		/// Lookup securities, portfolios and orders.
+		/// </summary>
+		/// <param name="connector">The connection of interaction with trade systems.</param>
+		public static void LookupAll(this IConnector connector)
+		{
+			if (connector == null)
+				throw new ArgumentNullException(nameof(connector));
+
+			connector.LookupSecurities(LookupAllCriteria);
+			connector.LookupPortfolios(new Portfolio());
+			connector.LookupOrders(new Order());
+		}
+
+		/// <summary>
+		/// Truncate the specified order book by max depth value.
+		/// </summary>
+		/// <param name="depth">Order book.</param>
+		/// <param name="maxDepth">The maximum depth of order book.</param>
+		/// <returns>Truncated order book.</returns>
+		public static MarketDepth Truncate(this MarketDepth depth, int maxDepth)
+		{
+			if (depth == null)
+				throw new ArgumentNullException(nameof(depth));
+
+			var result = depth.Clone();
+			result.Update(result.Bids.Take(maxDepth), result.Asks.Take(maxDepth), true);
+			return result;
+		}
+
+		/// <summary>
+		/// Get adapter by portfolio.
+		/// </summary>
+		/// <param name="provider">The message adapter's provider.</param>
+		/// <param name="portfolio">Portfolio.</param>
+		/// <returns>The found adapter.</returns>
+		public static IMessageAdapter GetAdapter(this IPortfolioMessageAdapterProvider provider, Portfolio portfolio)
+		{
+			if (provider == null)
+				throw new ArgumentNullException(nameof(provider));
+
+			if (portfolio == null)
+				throw new ArgumentNullException(nameof(portfolio));
+
+			return provider.GetAdapter(portfolio.Name);
 		}
 	}
 }

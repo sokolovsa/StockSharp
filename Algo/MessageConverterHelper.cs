@@ -635,7 +635,7 @@ namespace StockSharp.Algo
 			return new SecurityLookupMessage
 			{
 				//LocalTime = CurrentTime,
-				SecurityId = securityId ?? criteria.ToSecurityId(),
+				SecurityId = securityId ?? (criteria.Id.IsEmpty() && criteria.Code.IsEmpty() ? default(SecurityId) : criteria.ToSecurityId()),
 				Name = criteria.Name,
 				Class = criteria.Class,
 				SecurityType = criteria.Type,
@@ -1701,9 +1701,9 @@ namespace StockSharp.Algo
 				From = from ?? series.From,
 				To = to ?? series.To,
 				Count = count ?? series.Count,
-				BuildCandlesMode = series.BuildCandlesMode,
-				BuildCandlesFrom = series.BuildCandlesFrom,
-				BuildCandlesField = series.BuildCandlesField,
+				BuildMode = series.BuildCandlesMode,
+				BuildFrom = series.BuildCandlesFrom,
+				BuildField = series.BuildCandlesField,
 				IsCalcVolumeProfile = series.IsCalcVolumeProfile,
 				AllowBuildFromSmallerTimeFrame = series.AllowBuildFromSmallerTimeFrame,
 				IsRegularTradingHours = series.IsRegularTradingHours,

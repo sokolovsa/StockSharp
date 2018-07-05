@@ -27,6 +27,11 @@
 				SecurityId = securityId;
 				IsBack = true;
 			}
+
+			public override Message Clone()
+			{
+				return new ProcessSuspendedSecurityMessage(Adapter, SecurityId);
+			}
 		}
 
 		private readonly PairSet<object, SecurityId> _securityIds = new PairSet<object, SecurityId>();
@@ -47,10 +52,7 @@
 		public SecurityNativeIdMessageAdapter(IMessageAdapter innerAdapter, INativeIdStorage storage)
 			: base(innerAdapter)
 		{
-			if (storage == null)
-				throw new ArgumentNullException(nameof(storage));
-
-			Storage = storage;
+			Storage = storage ?? throw new ArgumentNullException(nameof(storage));
 			Storage.Added += OnStorageNewIdentifierAdded;
 		}
 

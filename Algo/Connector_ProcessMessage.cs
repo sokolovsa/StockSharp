@@ -90,7 +90,6 @@ namespace StockSharp.Algo
 			}
 		}
 
-		private readonly Dictionary<Security, IOrderLogMarketDepthBuilder> _olBuilders = new Dictionary<Security, IOrderLogMarketDepthBuilder>();
 		private readonly CachedSynchronizedDictionary<IMessageAdapter, ConnectionStates> _adapterStates = new CachedSynchronizedDictionary<IMessageAdapter, ConnectionStates>();
 		
 		private readonly ResetMessage _disposeMessage = new ResetMessage();
@@ -233,9 +232,11 @@ namespace StockSharp.Algo
 
 				while (adapter != null)
 				{
-					adapter.DoIf<IMessageAdapter, StorageMessageAdapter>(a => StorageAdapter = a);
+					if (adapter is StorageMessageAdapter storage)
+						StorageAdapter = storage;
 
-					adapter.InnerAdapter.DoIf<IMessageAdapter, BasketMessageAdapter>(a => _adapter = a);
+					if (adapter.InnerAdapter is BasketMessageAdapter basket)
+						_adapter = basket;
 
 					adapter = adapter.InnerAdapter as IMessageAdapterWrapper;
 				}
@@ -307,9 +308,9 @@ namespace StockSharp.Algo
 					if (SupportOffline)
 						_inAdapter = new OfflineMessageAdapter(_inAdapter) { OwnInnerAdaper = true };
 
-					if (_entityRegistry != null && _storageRegistry != null)
+					if (_entityRegistry != null && _storageRegistry != null && _snapshotRegistry != null)
 					{
-						_inAdapter = StorageAdapter = new StorageMessageAdapter(_inAdapter, _entityRegistry, _storageRegistry)
+						_inAdapter = StorageAdapter = new StorageMessageAdapter(_inAdapter, _entityRegistry, _storageRegistry, _snapshotRegistry)
 						{
 							OwnInnerAdaper = true,
 							OverrideSecurityData = OverrideSecurityData
@@ -984,34 +985,13 @@ namespace StockSharp.Algo
 			if (LookupMessagesOnConnect)
 			{
 				if (adapter.PortfolioLookupRequired)
-				{
-					SendInMessage(new PortfolioLookupMessage
-					{
-						TransactionId = TransactionIdGenerator.GetNextId(),
-						Adapter = adapter,
-					});
-				}
+					LookupPortfolios(new Portfolio(), adapter);
 
 				if (adapter.OrderStatusRequired)
-				{
-					var transactionId = TransactionIdGenerator.GetNextId();
-					_entityCache.AddOrderStatusTransactionId(transactionId);
-
-					SendInMessage(new OrderStatusMessage
-					{
-						TransactionId = transactionId,
-						Adapter = adapter,
-					});
-				}
+					LookupOrders(new Order(), adapter);
 
 				if (adapter.SecurityLookupRequired)
-				{
-					SendInMessage(new SecurityLookupMessage
-					{
-						TransactionId = TransactionIdGenerator.GetNextId(),
-						Adapter = adapter,
-					});
-				}	
+					LookupSecurities(new Security(), adapter);
 			}
 
 			if (!isRestored)
@@ -1278,7 +1258,7 @@ namespace StockSharp.Algo
 
 				if (AutoPortfoliosSubscribe)
 				{
-					var adapter = Adapter.AdapterProvider.GetAdapter(portfolio.Name);
+					var adapter = Adapter.AdapterProvider.GetAdapter(portfolio);
 
 					if (adapter?.IsSupportSubscriptionByPortfolio == true && Adapter.InnerAdapters[adapter] != -1)
 					{
@@ -1522,47 +1502,6 @@ namespace StockSharp.Algo
 			//logItem.LocalTime = message.LocalTime;
 
 			RaiseNewOrderLogItem(logItem);
-
-			if (message.IsSystem == false)
-				return;
-
-			if (CreateDepthFromOrdersLog)
-			{
-				try
-				{
-					var builder = _olBuilders.SafeAdd(security, key => MarketDataAdapter.CreateOrderLogMarketDepthBuilder(message.SecurityId));
-
-					if (builder == null)
-						throw new InvalidOperationException();
-
-					var updated = builder.Update(message);
-
-					if (updated)
-					{
-						RaiseNewMessage(builder.Depth.Clone());
-						ProcessQuotesMessage(security, builder.Depth);
-					}
-				}
-				catch (Exception ex)
-				{
-					// если ОЛ поврежден, то не нарушаем весь цикл обработки сообщения
-					// а только выводим сообщение в лог
-					RaiseError(ex);
-				}
-			}
-
-			if (trade != null && CreateTradesFromOrdersLog)
-			{
-				var tuple = _entityCache.GetTrade(security, message.TradeId, message.TradeStringId, (id, stringId) =>
-				{
-					var t = trade.Clone();
-					t.OrderDirection = message.Side.Invert();
-					return t;
-				});
-
-				if (tuple.Item2)
-					RaiseNewTrade(tuple.Item1);
-			}
 		}
 
 		private void ProcessTradeMessage(Security security, ExecutionMessage message)
@@ -1647,7 +1586,7 @@ namespace StockSharp.Algo
 			}
 		}
 
-		private void ProcessOrderMessage(Order o, Security security, ExecutionMessage message, long transactionId)
+		private void ProcessOrderMessage(Order o, Security security, ExecutionMessage message, long transactionId, bool isStatusRequest)
 		{
 			if (message.OrderState != OrderStates.Failed && message.Error == null)
 			{
@@ -1684,6 +1623,12 @@ namespace StockSharp.Algo
 							RaiseNewStopOrder(order);
 						else
 							RaiseNewOrder(order);
+
+						if (isStatusRequest && order.State == OrderStates.Pending)
+						{
+							// TODO temp disabled (need more tests)
+							//RegisterOrder(order, false);
+						}
 					}
 					else if (change.IsChanged)
 					{
@@ -1804,14 +1749,14 @@ namespace StockSharp.Algo
 			RaiseNewMyTrade(tuple.Item1);
 		}
 
-		private void ProcessTransactionMessage(Order order, Security security, ExecutionMessage message, long transactionId)
+		private void ProcessTransactionMessage(Order order, Security security, ExecutionMessage message, long transactionId, bool isStatusRequest)
 		{
 			var processed = false;
 
 			if (message.HasOrderInfo())
 			{
 				processed = true;
-				ProcessOrderMessage(order, security, message, transactionId);
+				ProcessOrderMessage(order, security, message, transactionId, isStatusRequest);
 			}
 
 			if (message.HasTradeInfo())
@@ -1821,7 +1766,7 @@ namespace StockSharp.Algo
 			}
 
 			if (!processed)
-				throw new ArgumentOutOfRangeException(nameof(message), LocalizedStrings.Str1695Params.Put(message.ExecutionType));
+				throw new ArgumentOutOfRangeException(nameof(message), message.ExecutionType, LocalizedStrings.Str1695Params.Put(message));
 		}
 
 		private void ProcessExecutionMessage(ExecutionMessage message)
@@ -1845,10 +1790,16 @@ namespace StockSharp.Algo
 						break;
 					}
 
-					if (message.Error != null && _entityCache.IsOrderStatusRequest(originId))
+					var isStatusRequest = _entityCache.IsOrderStatusRequest(originId);
+
+					if (message.Error != null && isStatusRequest)
 					{
-						RaiseOrderStatusFailed(originId, message.Error);
-						break;
+						// TransId != 0 means contains failed order info (not just status response)
+						if (message.TransactionId == 0)
+						{
+							RaiseOrderStatusFailed(originId, message.Error);
+							break;
+						}
 					}
 
 					var order = _entityCache.GetOrder(message, out var transactionId);
@@ -1857,14 +1808,14 @@ namespace StockSharp.Algo
 					{
 						var security = LookupSecurity(message.SecurityId);
 
-						if (transactionId == 0 && _entityCache.IsOrderStatusRequest(originId))
+						if (transactionId == 0 && isStatusRequest)
 							transactionId = TransactionIdGenerator.GetNextId();
 
-						ProcessTransactionMessage(null, security, message, transactionId);
+						ProcessTransactionMessage(null, security, message, transactionId, isStatusRequest);
 					}
 					else
 					{
-						ProcessTransactionMessage(order, order.Security, message, transactionId);
+						ProcessTransactionMessage(order, order.Security, message, transactionId, isStatusRequest);
 					}
 
 					break;
@@ -1890,7 +1841,7 @@ namespace StockSharp.Algo
 				}
 				
 				default:
-					throw new ArgumentOutOfRangeException(nameof(message), LocalizedStrings.Str1695Params.Put(message.ExecutionType));
+					throw new ArgumentOutOfRangeException(nameof(message), message.ExecutionType, LocalizedStrings.Str1695Params.Put(message));
 			}
 		}
 

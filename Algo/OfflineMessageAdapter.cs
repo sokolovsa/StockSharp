@@ -135,6 +135,7 @@
 									ExecutionType = ExecutionTypes.Transaction,
 									HasOrderInfo = true,
 									OriginalTransactionId = cancelMsg.TransactionId,
+									ServerTime = DateTimeOffset.Now,
 									OrderState = OrderStates.Done,
 									OrderType = originOrderMsg.OrderType,
 								});
@@ -167,6 +168,7 @@
 									ExecutionType = ExecutionTypes.Transaction,
 									HasOrderInfo = true,
 									OriginalTransactionId = replaceMsg.OldTransactionId,
+									ServerTime = DateTimeOffset.Now,
 									OrderState = OrderStates.Done,
 									OrderType = originOrderMsg.OrderType,
 								});
@@ -215,12 +217,15 @@
 				}
 				default:
 				{
-					lock (_syncObject)
+					if (!message.IgnoreOffline)
 					{
-						if (!_connected)
+						lock (_syncObject)
 						{
-							StoreMessage(message.Clone());
-							return;
+							if (!_connected)
+							{
+								StoreMessage(message.Clone());
+								return;
+							}
 						}
 					}
 
@@ -285,6 +290,12 @@
 				case MessageTypes.Connect:
 				{
 					connectMessage = (ConnectMessage)message;
+					break;
+				}
+
+				case MessageTypes.Disconnect:
+				{
+					_connected = false;
 					break;
 				}
 			}

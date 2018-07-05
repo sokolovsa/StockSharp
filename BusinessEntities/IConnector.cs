@@ -285,12 +285,12 @@ namespace StockSharp.BusinessEntities
 		event Action<TimeSpan> MarketTimeChanged;
 
 		/// <summary>
-		/// Lookup result <see cref="LookupSecurities(Security)"/> received.
+		/// Lookup result <see cref="LookupSecurities(Security,IMessageAdapter)"/> received.
 		/// </summary>
 		event Action<Exception, IEnumerable<Security>> LookupSecuritiesResult;
 
 		/// <summary>
-		/// Lookup result <see cref="LookupPortfolios"/> received.
+		/// Lookup result <see cref="LookupPortfolios(Portfolio,IMessageAdapter)"/> received.
 		/// </summary>
 		event Action<Exception, IEnumerable<Portfolio>> LookupPortfoliosResult;
 
@@ -440,7 +440,8 @@ namespace StockSharp.BusinessEntities
 		/// To find instruments that match the filter <paramref name="criteria" />. Found instruments will be passed through the event <see cref="LookupSecuritiesResult"/>.
 		/// </summary>
 		/// <param name="criteria">The instrument whose fields will be used as a filter.</param>
-		void LookupSecurities(Security criteria);
+		/// <param name="adapter">Target adapter. Can be <see langword="null" />.</param>
+		void LookupSecurities(Security criteria, IMessageAdapter adapter = null);
 
 		/// <summary>
 		/// To find instruments that match the filter <paramref name="criteria" />. Found instruments will be passed through the event <see cref="LookupSecuritiesResult"/>.
@@ -459,7 +460,27 @@ namespace StockSharp.BusinessEntities
 		/// To find portfolios that match the filter <paramref name="criteria" />. Found portfolios will be passed through the event <see cref="LookupPortfoliosResult"/>.
 		/// </summary>
 		/// <param name="criteria">The portfolio which fields will be used as a filter.</param>
-		void LookupPortfolios(Portfolio criteria);
+		/// <param name="adapter">Target adapter. Can be <see langword="null" />.</param>
+		void LookupPortfolios(Portfolio criteria, IMessageAdapter adapter = null);
+
+		/// <summary>
+		/// To find portfolios that match the filter <paramref name="criteria" />. Found portfolios will be passed through the event <see cref="LookupPortfoliosResult"/>.
+		/// </summary>
+		/// <param name="criteria">The portfolio which fields will be used as a filter.</param>
+		void LookupPortfolios(PortfolioLookupMessage criteria);
+
+		/// <summary>
+		/// To find orders that match the filter <paramref name="criteria" />. Found orders will be passed through the event <see cref="NewOrder"/>.
+		/// </summary>
+		/// <param name="criteria">The order which fields will be used as a filter.</param>
+		/// <param name="adapter">Target adapter. Can be <see langword="null" />.</param>
+		void LookupOrders(Order criteria, IMessageAdapter adapter = null);
+
+		/// <summary>
+		/// To find orders that match the filter <paramref name="criteria" />. Found orders will be passed through the event <see cref="NewOrder"/>.
+		/// </summary>
+		/// <param name="criteria">The order which fields will be used as a filter.</param>
+		void LookupOrders(OrderStatusMessage criteria);
 
 		/// <summary>
 		/// Lookup security by identifier.
@@ -550,7 +571,12 @@ namespace StockSharp.BusinessEntities
 		/// To start getting quotes (order book) by the instrument. Quotes values are available through the event <see cref="IConnector.MarketDepthsChanged"/>.
 		/// </summary>
 		/// <param name="security">The instrument by which quotes getting should be started.</param>
-		void RegisterMarketDepth(Security security);
+		/// <param name="from">The initial date from which you need to get data.</param>
+		/// <param name="to">The final date by which you need to get data.</param>
+		/// <param name="count">Max count.</param>
+		/// <param name="buildFrom">Which market-data type is used as a source value.</param>
+		/// <param name="maxDepth">Max depth of requested order book.</param>
+		void RegisterMarketDepth(Security security, DateTimeOffset? from = null, DateTimeOffset? to = null, long? count = null, MarketDataTypes? buildFrom = null, int? maxDepth = null);
 
 		/// <summary>
 		/// To stop getting quotes by the instrument.
@@ -574,7 +600,11 @@ namespace StockSharp.BusinessEntities
 		/// To start getting trades (tick data) by the instrument. New trades will come through the event <see cref="IConnector.NewTrades"/>.
 		/// </summary>
 		/// <param name="security">The instrument by which trades getting should be started.</param>
-		void RegisterTrades(Security security);
+		/// <param name="from">The initial date from which you need to get data.</param>
+		/// <param name="to">The final date by which you need to get data.</param>
+		/// <param name="count">Max count.</param>
+		/// <param name="buildFrom">Which market-data type is used as a source value.</param>
+		void RegisterTrades(Security security, DateTimeOffset? from = null, DateTimeOffset? to = null, long? count = null, MarketDataTypes? buildFrom = null);
 
 		/// <summary>
 		/// To stop getting trades (tick data) by the instrument.
@@ -586,7 +616,11 @@ namespace StockSharp.BusinessEntities
 		/// To start getting new information (for example, <see cref="Security.LastTrade"/> or <see cref="Security.BestBid"/>) by the instrument.
 		/// </summary>
 		/// <param name="security">The instrument by which new information getting should be started.</param>
-		void RegisterSecurity(Security security);
+		/// <param name="from">The initial date from which you need to get data.</param>
+		/// <param name="to">The final date by which you need to get data.</param>
+		/// <param name="count">Max count.</param>
+		/// <param name="buildFrom">Which market-data type is used as a source value.</param>
+		void RegisterSecurity(Security security, DateTimeOffset? from = null, DateTimeOffset? to = null, long? count = null, MarketDataTypes? buildFrom = null);
 
 		/// <summary>
 		/// To stop getting new information.
@@ -598,7 +632,10 @@ namespace StockSharp.BusinessEntities
 		/// Subscribe on order log for the security.
 		/// </summary>
 		/// <param name="security">Security for subscription.</param>
-		void RegisterOrderLog(Security security);
+		/// <param name="from">The initial date from which you need to get data.</param>
+		/// <param name="to">The final date by which you need to get data.</param>
+		/// <param name="count">Max count.</param>
+		void RegisterOrderLog(Security security, DateTimeOffset? from = null, DateTimeOffset? to = null, long? count = null);
 
 		/// <summary>
 		/// Unsubscribe from order log for the security.

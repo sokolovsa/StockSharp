@@ -125,6 +125,7 @@
     <Compile Include="Export\IndicatorValue.cs" />
     <Compile Include="FilterableSecurityProvider.cs" />
     <Compile Include="FilteredMarketDepthAdapter.cs" />
+    <Compile Include="OrderLogMessageAdapter.cs" />
     <Compile Include="PermissionCredentialsAuthorization.cs" />
     <Compile Include="PermissionCredentialsRemoteAuthorization.cs" />
     <Compile Include="PermissionCredentialsStorage.cs" />
@@ -352,7 +353,7 @@
     <Compile Include="Storages\Binary\Level1BinarySerializer.cs" />
     <Compile Include="Storages\MultiSecurityStorage.cs" />
     <Compile Include="Storages\NewsList.cs" />
-    <Compile Include="Storages\SnapshotStorage.cs" />
+    <Compile Include="Storages\SnapshotRegistry.cs" />
     <Compile Include="Storages\StorageEntityFactory.cs" />
     <Compile Include="Storages\Binary\TransactionBinarySerializer.cs" />
     <Compile Include="Storages\Binary\NewsBinarySerializer.cs" />

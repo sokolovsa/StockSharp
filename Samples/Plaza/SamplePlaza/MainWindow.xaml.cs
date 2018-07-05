@@ -17,6 +17,7 @@ namespace SamplePlaza
 {
 	using System;
 	using System.ComponentModel;
+	using System.IO;
 	using System.Linq;
 	using System.Net;
 	using System.Windows;
@@ -25,6 +26,7 @@ namespace SamplePlaza
 	using Ecng.Configuration;
 	using Ecng.Xaml;
 
+	using StockSharp.Algo;
 	using StockSharp.Algo.Storages;
 	using StockSharp.Algo.Storages.Csv;
 	using StockSharp.BusinessEntities;
@@ -49,6 +51,7 @@ namespace SamplePlaza
 		private readonly LogManager _logManager = new LogManager();
 		private readonly CsvEntityRegistry _entityRegistry;
 		private readonly IStorageRegistry _storageRegistry;
+		private readonly SnapshotRegistry _snapshotRegistry;
 
 		public MainWindow()
 		{
@@ -76,6 +79,8 @@ namespace SamplePlaza
 			{
 				DefaultDrive = new LocalMarketDataDrive(dataPath)
 			};
+
+			_snapshotRegistry = new SnapshotRegistry(Path.Combine(dataPath, "Snapshots"));
 
 			//AppName.Text = Trader.AppName;
 
@@ -145,10 +150,10 @@ namespace SamplePlaza
 						Trader.Tables.Clear();
 						Trader.TableRegistry.SyncTables(Tables.SelectedTables);
 
-						if (Trader.Tables.Contains(Trader.TableRegistry.AnonymousOrdersLog))
-						{
-							Trader.CreateDepthFromOrdersLog = true;
-						}
+						//if (Trader.Tables.Contains(Trader.TableRegistry.AnonymousOrdersLog))
+						//{
+						//	Trader.CreateDepthFromOrdersLog = true;
+						//}
 
 						Trader.ReConnectionSettings.AttemptCount = -1;
 						Trader.Restored += () => this.GuiAsync(() => MessageBox.Show(this, LocalizedStrings.Str2958));
@@ -181,7 +186,7 @@ namespace SamplePlaza
 						Trader.NewTrade += _tradesWindow.TradeGrid.Trades.Add;
 						Trader.NewOrder += _ordersWindow.OrderGrid.Orders.Add;
 						Trader.NewMyTrade += _myTradesWindow.TradeGrid.Trades.Add;
-						Trader.NewOrderLogItem += _ordersLogWindow.AddOperation;
+						Trader.NewOrderLogItem += _ordersLogWindow.OrderLogGrid.LogItems.Add;
 
 						Trader.NewPortfolio += _portfoliosWindow.PortfolioGrid.Portfolios.Add;
 						Trader.NewPosition += _portfoliosWindow.PortfolioGrid.Positions.Add;
@@ -204,7 +209,7 @@ namespace SamplePlaza
 							// запоминаем настроенный адаптер, так как InitializeStorage полностью очищает ранее осуществленные настройки
 							var plazaAdaprer = Trader.Adapter.InnerAdapters.OfType<PlazaMessageAdapter>().First();
 
-							Trader.InitializeStorage(_entityRegistry, _storageRegistry);
+							Trader.InitializeStorage(_entityRegistry, _storageRegistry, _snapshotRegistry);
 
 							Trader.Adapter.InnerAdapters.Add(plazaAdaprer);
 
@@ -219,7 +224,9 @@ namespace SamplePlaza
 
 							Trader.StorageAdapter.Format = StorageFormats.Csv;
 							Trader.StorageAdapter.DaysLoad = TimeSpan.FromDays(3);
-							Trader.StorageAdapter.Load();
+							Trader.LookupAll();
+
+							_snapshotRegistry.Init();
 
 							ConfigManager.RegisterService<IExchangeInfoProvider>(new StorageExchangeInfoProvider(_entityRegistry));
 						}

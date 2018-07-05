@@ -7,6 +7,7 @@ namespace StockSharp.Algo.Candles.Compression
 
 	using StockSharp.Algo.Storages;
 	using StockSharp.Localization;
+	using StockSharp.Logging;
 	using StockSharp.Messages;
 
 	/// <summary>
@@ -166,6 +167,8 @@ namespace StockSharp.Algo.Candles.Compression
 
 						if (timeFrames.Contains(originalTf) || InnerAdapter.CheckTimeFrameByRequest)
 						{
+							this.AddInfoLog("Origin tf: {0}", originalTf);
+
 							var original = (MarketDataMessage)mdMsg.Clone();
 							_seriesByTransactionId.Add(transactionId, new SeriesInfo(original, original)
 							{
@@ -185,6 +188,8 @@ namespace StockSharp.Algo.Candles.Compression
 
 							if (smaller != null)
 							{
+								this.AddInfoLog("Smaller tf: {0}->{1}", originalTf, smaller);
+
 								var original = (MarketDataMessage)mdMsg.Clone();
 
 								var current = (MarketDataMessage)original.Clone();
@@ -258,7 +263,7 @@ namespace StockSharp.Algo.Candles.Compression
 			if (getTransactionId == null)
 				throw new ArgumentNullException(nameof(getTransactionId));
 
-			var buildFrom = original.BuildCandlesFrom ?? InnerAdapter.SupportedMarketDataTypes.Intersect(CandleHelper.CandleDataSources).OrderBy(t =>
+			var buildFrom = original.BuildFrom ?? InnerAdapter.SupportedMarketDataTypes.Intersect(CandleHelper.CandleDataSources).OrderBy(t =>
 			{
 				// make priority
 				switch (t)
@@ -287,16 +292,18 @@ namespace StockSharp.Algo.Candles.Compression
 				Count = original.Count,
 				MaxDepth = original.MaxDepth,
 				TransactionId = getTransactionId(),
-				BuildCandlesField = original.BuildCandlesField,
+				BuildField = original.BuildField,
 				IsSubscribe = true,
 			};
 
 			original.CopyTo(current, false);
 
+			this.AddInfoLog("Build tf: {0}->{1}", buildFrom, original.Arg);
+
 			var series = new SeriesInfo((MarketDataMessage)original.Clone(), current)
 			{
 				LastTime = lastTime,
-				Transform = CreateTransform(current.DataType, current.BuildCandlesField),
+				Transform = CreateTransform(current.DataType, current.BuildField),
 				State = SeriesStates.Compress,
 			};
 
@@ -498,7 +505,7 @@ namespace StockSharp.Algo.Candles.Compression
 					RaiseNewOutMessage(message);
 			}
 			else
-				UpgradeSubscription(series);
+				UpgradeSubscription(series, message);
 
 			return true;
 		}
@@ -508,11 +515,11 @@ namespace StockSharp.Algo.Candles.Compression
 			if (!_seriesByTransactionId.TryGetValue(message.OriginalTransactionId, out var series))
 				return false;
 
-			UpgradeSubscription(series);
+			UpgradeSubscription(series, null);
 			return true;
 		}
 
-		private void UpgradeSubscription(SeriesInfo series)
+		private void UpgradeSubscription(SeriesInfo series, MarketDataMessage response)
 		{
 			if (series == null)
 				throw new ArgumentNullException(nameof(series));
@@ -522,7 +529,15 @@ namespace StockSharp.Algo.Candles.Compression
 			void Finish()
 			{
 				RemoveSeries(series);
-				RaiseNewOutMessage(new MarketDataFinishedMessage { OriginalTransactionId = original.TransactionId });
+
+				if (response != null && (response.Error != null || response.IsNotSupported))
+				{
+					response = (MarketDataMessage)response.Clone();
+					response.OriginalTransactionId = original.TransactionId;
+					RaiseNewOutMessage(response);
+				}
+				else
+					RaiseNewOutMessage(new MarketDataFinishedMessage { OriginalTransactionId = original.TransactionId });
 			}
 
 			if (original.To != null && series.LastTime != null && original.To <= series.LastTime)

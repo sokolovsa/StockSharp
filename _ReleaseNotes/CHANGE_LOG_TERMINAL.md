@@ -1,5 +1,73 @@
 StockSharp Terminal Change log
 ========================
+## v4.4.12:
+* (bug) Fix storage format select.
+* (bug) Fix cross-thread UI issues.
+* (bug) Fix spashscreen info.
+* (bug) Charting. Buy/Sell annotation theme fix.
+* (feature) Portfolios panel. Provide withdraw operation.
+* (feature) Orders panel. Conditional orders joined with regular orders.
+* (feature) Crypto connectors. BalanceCheckInterval for refresh an account balances in case of deposit and withdraw operation.
+* (bug) OrderGrid. Cancel group orders fix.
+* (feature) OpenECry. v3.5.14.41
+* (feature) FAST dialects. Made network settings configurable.
+* (feature) InteractiveBrokers. v9.73.07
+* (feature) InteractiveBrokers. SSL support.
+* (bug) Fix securities lookup all processing.
+* (feature) CurrencyTypes. DEM, LUF.
+* (feature) ExchangeBoard. Globex board info added.
+* (bug) Fix process multiples timeframes.
+* (bug) Transactions snapshot storage. Fix orders and trades save.
+* (bug) SecurityGrid. Do not show errors in security grid.
+* (feature) Security lookup. Reset button to exchange board editor added.
+* (bug) InteractiveBrokers. Fix expiry time parsing fix.
+* (bug) InteractiveBrokers. Market depth fix.
+* (feature) Index builder. Ignore errors as parameters.
+* (feature) Save/load portfolio-connection mapping.
+* (bug) Fix conditional orders save.
+
+## v4.4.11:
+* (bug) Quik. Fix portfolio receive fix.
+* (bug) Image publish cancellation processing fix.
+* (feature) QuikLua. Handle From To date range for market data requests. https://stocksharp.ru/forum/9460/korrektnoe-otobrazhenie-svechei/
+* (bug) Charting. Fix Equity legend color.
+* (bug) TimeSpanEditor. Fix DevExpress themes.
+* (feature) Default implementation of order log-> order book builder.
+* (feature) Bittrex. Web sockets supported.
+* (bug) Charting. Fix drawing trades with string id.
+* (feature) OrderGrid, ExecutionGrid, TradeGrid, MyTradeGrid. Sides coloring.
+* (feature) SecurityGrid. BuyBackDate, BuyBackPrice columns.
+* (bug) ConnectorWindow. Fix stub connectors check.
+* (feature) IConnector. Method RegisterXXX accepts From and To range, build from option.
+* (feature) ExecutionGrid. OriginSide coloring.
+* (feature) Crypto connectors. BalanceCheckInterval for refresh an account balances in case of deposit and withdraw operation.
+* (bug) Fix duplicate candles subscriptions.
+* (feature) Huobi. Support HADAX.
+* (feature) FIX connector. Time format parsing settings as public.
+* (bug) Snapshot. Fix trade data save.
+* (feature) Orders modify. Disable security and portfolio.
+* (feature) Binary format by default.
+* (feature) Default theme is VS2017Dark.
+
+## v4.4.10:
+* (feature) Themes. Icons auto coloring.
+* (feature) CandleSeries.IsRegularTradingHours.
+* (feature) Index and continuous securities support.
+* (feature) Remote storage support.
+* (bug) Logs. Designed fix.
+* (feature) FIX connector. SSL support extended.
+* (feature) FIX connector. QUIK FIX PreRrade support.
+* (bug) MarketDataGrid. Fix further refreshes after error request.
+* (bug) Chart. Fix Load indicators for deleted candles series.
+* (feature) Default theme changed.
+* (bug) Grids. Time zone column fix.
+* (bug) Chart icons color fixes.
+* (bug) Chart indicators change settings fix.
+* (feature) Alerts panel.
+* (feature) Chartings. Indicators settings while creation.
+* (feature) MACD histogram. Draw signal and macd lines.
+* (feature) Snapshot data refactoring.
+
 ## v4.4.9:
 * (feature) Emulator support.
 * (feature) Risk management.

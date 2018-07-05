@@ -123,6 +123,7 @@ namespace StockSharp.Algo.Storages
 		private readonly SyncObject _subscriptionsLock = new SyncObject();
 		private readonly HashSet<Tuple<SecurityId, DataType>> _subscriptions = new HashSet<Tuple<SecurityId, DataType>>();
 		private readonly Dictionary<long, Tuple<MarketDataMessage, Tuple<SecurityId, DataType>>> _subscriptionsById = new Dictionary<long, Tuple<MarketDataMessage, Tuple<SecurityId, DataType>>>();
+		private readonly SynchronizedDictionary<long, SecurityId> _securityIds = new SynchronizedDictionary<long, SecurityId>();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BufferMessageAdapter"/>.
@@ -167,7 +168,7 @@ namespace StockSharp.Algo.Storages
 				{
 					if (message.IsCalcVolumeProfile)
 					{
-						switch (message.BuildCandlesFrom)
+						switch (message.BuildFrom)
 						{
 							case MarketDataTypes.Trades:
 								dataType = TicksAsLevel1 ? DataType.Level1 : DataType.Ticks;
@@ -417,14 +418,18 @@ namespace StockSharp.Algo.Storages
 				case MessageTypes.OrderRegister:
 					var regMsg = (OrderRegisterMessage)message;
 
-					if (!CanStore<ExecutionMessage>(regMsg.SecurityId, ExecutionTypes.Transaction))
-						break;
+					//if (!CanStore<ExecutionMessage>(regMsg.SecurityId, ExecutionTypes.Transaction))
+					//	break;
+
+					// try - cause looped back messages from offline adapter
+					_securityIds.TryAdd(regMsg.TransactionId, regMsg.SecurityId);
 
 					_transactionsBuffer.Add(regMsg.SecurityId, new ExecutionMessage
 					{
 						ServerTime = DateTimeOffset.Now,
 						ExecutionType = ExecutionTypes.Transaction,
 						SecurityId = regMsg.SecurityId,
+						TransactionId = regMsg.TransactionId,
 						HasOrderInfo = true,
 						OrderPrice = regMsg.Price,
 						OrderVolume = regMsg.Volume,
@@ -436,14 +441,16 @@ namespace StockSharp.Algo.Storages
 						Side = regMsg.Side,
 						TimeInForce = regMsg.TimeInForce,
 						ExpiryDate = regMsg.TillDate,
+						Balance = regMsg.Volume,
 						VisibleVolume = regMsg.VisibleVolume,
 						LocalTime = regMsg.LocalTime,
-						TransactionId = regMsg.TransactionId,
 						IsMarketMaker = regMsg.IsMarketMaker,
 						IsMargin = regMsg.IsMargin,
 						Slippage = regMsg.Slippage,
 						OrderType = regMsg.OrderType,
 						UserOrderId = regMsg.UserOrderId,
+						OrderState = OrderStates.Pending,
+						Condition = regMsg.Condition?.Clone(),
 						//RepoInfo = regMsg.RepoInfo?.Clone(),
 						//RpsInfo = regMsg.RpsInfo?.Clone(),
 					});
@@ -451,8 +458,11 @@ namespace StockSharp.Algo.Storages
 				case MessageTypes.OrderCancel:
 					var cancelMsg = (OrderCancelMessage)message;
 
-					if (!CanStore<ExecutionMessage>(cancelMsg.SecurityId, ExecutionTypes.Transaction))
-						break;
+					//if (!CanStore<ExecutionMessage>(cancelMsg.SecurityId, ExecutionTypes.Transaction))
+					//	break;
+
+					// try - cause looped back messages from offline adapter
+					_securityIds.TryAdd(cancelMsg.TransactionId, cancelMsg.SecurityId);
 
 					_transactionsBuffer.Add(cancelMsg.SecurityId, new ExecutionMessage
 					{
@@ -460,6 +470,7 @@ namespace StockSharp.Algo.Storages
 						ExecutionType = ExecutionTypes.Transaction,
 						SecurityId = cancelMsg.SecurityId,
 						HasOrderInfo = true,
+						TransactionId = cancelMsg.TransactionId,
 						IsCancelled = true,
 						OrderId = cancelMsg.OrderId,
 						OrderStringId = cancelMsg.OrderStringId,
@@ -521,8 +532,8 @@ namespace StockSharp.Algo.Storages
 							break;
 						case ExecutionTypes.Transaction:
 							
-							// some error responses do not contains sec id
-							if (secId.IsDefault())
+							// some responses do not contains sec id
+							if (secId.IsDefault() && !_securityIds.TryGetValue(execMsg.OriginalTransactionId, out secId))
 							{
 								base.OnInnerAdapterNewOutMessage(message);
 								return;
@@ -534,10 +545,10 @@ namespace StockSharp.Algo.Storages
 							buffer = _orderLogBuffer;
 							break;
 						default:
-							throw new ArgumentOutOfRangeException(nameof(message), LocalizedStrings.Str1695Params.Put(execType));
+							throw new ArgumentOutOfRangeException(nameof(message), execType, LocalizedStrings.Str1695Params.Put(message));
 					}
 
-					if (CanStore<ExecutionMessage>(secId, execType))
+					if (execType == ExecutionTypes.Transaction || CanStore<ExecutionMessage>(secId, execType))
 						buffer.Add(secId, (ExecutionMessage)message.Clone());
 
 					break;
@@ -572,8 +583,8 @@ namespace StockSharp.Algo.Storages
 					var posMsg = (PositionChangeMessage)message;
 					var secId = posMsg.SecurityId;
 
-					if (CanStore<PositionChangeMessage>(secId))
-						_positionChangesBuffer.Add(secId, (PositionChangeMessage)posMsg.Clone());
+					//if (CanStore<PositionChangeMessage>(secId))
+					_positionChangesBuffer.Add(secId, (PositionChangeMessage)posMsg.Clone());
 
 					break;
 				}

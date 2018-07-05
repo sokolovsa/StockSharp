@@ -77,10 +77,7 @@ namespace StockSharp.Algo.Storages
 
 			public BasketMarketDataStorageEnumerator(BasketMarketDataStorage<TMessage> storage, DateTime date)
 			{
-				if (storage == null)
-					throw new ArgumentNullException(nameof(storage));
-
-				_storage = storage;
+				_storage = storage ?? throw new ArgumentNullException(nameof(storage));
 				_date = date;
 
 				foreach (var s in storage._innerStorages.Cache)
@@ -116,7 +113,7 @@ namespace StockSharp.Algo.Storages
 						case ActionTypes.Add:
 						{
 							var enu = storage.Load(_date).GetEnumerator();
-							var lastTime = Current == null ? DateTimeOffset.MinValue : Current.GetServerTime();
+							var lastTime = Current?.GetServerTime() ?? DateTimeOffset.MinValue;
 
 							var hasValues = true;
 
@@ -421,10 +418,7 @@ namespace StockSharp.Algo.Storages
 
 			public BasketMarketDataSerializer(BasketMarketDataStorage<TMessage> parent)
 			{
-				if (parent == null)
-					throw new ArgumentNullException(nameof(parent));
-
-				_parent = parent;
+				_parent = parent ?? throw new ArgumentNullException(nameof(parent));
 			}
 
 			StorageFormats IMarketDataSerializer.Format => _parent.InnerStorages.First().Serializer.Format;
@@ -515,12 +509,7 @@ namespace StockSharp.Algo.Storages
 
 		private static DateTimeOffset GetServerTime(Message message)
 		{
-			var serverTime = message.GetServerTime();
-
-			if (serverTime == null)
-				throw new InvalidOperationException();
-
-			return serverTime.Value;
+			return message.GetServerTime();
 		}
 	}
 }

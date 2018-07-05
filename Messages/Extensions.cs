@@ -312,8 +312,18 @@ namespace StockSharp.Messages
 		/// Get message server time.
 		/// </summary>
 		/// <param name="message">Message.</param>
-		/// <returns>Server time message. If the value is <see langword="null" />, the message does not contain the server time.</returns>
-		public static DateTimeOffset? GetServerTime(this Message message)
+		/// <returns>Server time.</returns>
+		public static DateTimeOffset GetServerTime(this Message message)
+		{
+			return message.TryGetServerTime().Value;
+		}
+
+		/// <summary>
+		/// Get message server time.
+		/// </summary>
+		/// <param name="message">Message.</param>
+		/// <returns>Server time. If the value is <see langword="null" />, the message does not contain the server time.</returns>
+		public static DateTimeOffset? TryGetServerTime(this Message message)
 		{
 			switch (message.Type)
 			{
@@ -323,6 +333,10 @@ namespace StockSharp.Messages
 					return ((QuoteChangeMessage)message).ServerTime;
 				case MessageTypes.Level1Change:
 					return ((Level1ChangeMessage)message).ServerTime;
+				case MessageTypes.PositionChange:
+					return ((PositionChangeMessage)message).ServerTime;
+				case MessageTypes.PortfolioChange:
+					return ((PortfolioChangeMessage)message).ServerTime;
 				case MessageTypes.Time:
 					return ((TimeMessage)message).ServerTime;
 				case MessageTypes.Connect:
@@ -789,6 +803,45 @@ namespace StockSharp.Messages
 		public static Languages GetPreferedLanguage(this MessageAdapterCategories? categories)
 		{
 			return categories?.Contains(MessageAdapterCategories.Russia) == true ? Languages.Russian : Languages.English;
+		}
+
+		/// <summary>
+		/// To check, does the string contain the order registration.
+		/// </summary>
+		/// <param name="item">Order log item.</param>
+		/// <returns><see langword="true" />, if the string contains the order registration, otherwise, <see langword="false" />.</returns>
+		public static bool IsOrderLogRegistered(this ExecutionMessage item)
+		{
+			if (item == null)
+				throw new ArgumentNullException(nameof(item));
+
+			return item.OrderState == OrderStates.Active && item.TradePrice == null;
+		}
+
+		/// <summary>
+		/// To check, does the string contain the cancelled order.
+		/// </summary>
+		/// <param name="item">Order log item.</param>
+		/// <returns><see langword="true" />, if the string contain the cancelled order, otherwise, <see langword="false" />.</returns>
+		public static bool IsOrderLogCanceled(this ExecutionMessage item)
+		{
+			if (item == null)
+				throw new ArgumentNullException(nameof(item));
+
+			return item.OrderState == OrderStates.Done && item.TradeVolume == null;
+		}
+
+		/// <summary>
+		/// To check, does the string contain the order matching.
+		/// </summary>
+		/// <param name="item">Order log item.</param>
+		/// <returns><see langword="true" />, if the string contains order matching, otherwise, <see langword="false" />.</returns>
+		public static bool IsOrderLogMatched(this ExecutionMessage item)
+		{
+			if (item == null)
+				throw new ArgumentNullException(nameof(item));
+
+			return item.TradeVolume != null;
 		}
 	}
 }

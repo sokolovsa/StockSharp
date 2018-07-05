@@ -31,7 +31,8 @@ namespace StockSharp.Algo.Storages
 
 		private readonly IdGenerator _transactionIdGenerator;
 		private readonly BasketMarketDataStorage<T> _basketStorage;
-		private readonly CancellationTokenSource _cancellationToken;
+
+		private CancellationTokenSource _cancellationToken;
 
 		private bool _isInitialized;
 		private bool _isChanged;
@@ -126,8 +127,6 @@ namespace StockSharp.Algo.Storages
 		{
 			_transactionIdGenerator = transactionIdGenerator ?? throw new ArgumentNullException(nameof(transactionIdGenerator));
 			_basketStorage = basketStorage ?? throw new ArgumentNullException(nameof(basketStorage));
-
-			_cancellationToken = new CancellationTokenSource();
 		}
 
 		/// <summary>
@@ -200,7 +199,7 @@ namespace StockSharp.Algo.Storages
 			else
 				message = _messageQueue.Dequeue().Value;
 
-			var serverTime = message.GetServerTime();
+			var serverTime = message.TryGetServerTime();
 
 			if (serverTime != null)
 				_currentTime = serverTime.Value;
@@ -249,6 +248,8 @@ namespace StockSharp.Algo.Storages
 		/// <param name="stopDate">Date in history to stop the paper trading (date is included).</param>
 		public void Start(DateTimeOffset startDate, DateTimeOffset stopDate)
 		{
+			_cancellationToken = new CancellationTokenSource();
+
 			ThreadingHelper
 				.Thread(() => CultureInfo.InvariantCulture.DoInCulture(() =>
 				{
@@ -325,7 +326,7 @@ namespace StockSharp.Algo.Storages
 		/// </summary>
 		public void Stop()
 		{
-			_cancellationToken.Cancel();
+			_cancellationToken?.Cancel();
 			_syncRoot.PulseSignal();
 		}
 
@@ -341,13 +342,13 @@ namespace StockSharp.Algo.Storages
 
 				var serverTime = msg.GetServerTime();
 
-				if (serverTime == null)
-					throw new InvalidOperationException();
+				//if (serverTime == null)
+				//	throw new InvalidOperationException();
 
-				if (serverTime.Value < startTime)
+				if (serverTime < startTime)
 					continue;
 
-				msg.LocalTime = serverTime.Value;
+				msg.LocalTime = serverTime;
 
 				if (checkFromTime)
 				{

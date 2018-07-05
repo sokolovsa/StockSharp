@@ -144,13 +144,7 @@ namespace StockSharp.Algo
 		public INativeIdStorage NativeIdStorage
 		{
 			get => _nativeIdStorage;
-			set
-			{
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-
-				_nativeIdStorage = value;
-			}
+			set => _nativeIdStorage = value ?? throw new ArgumentNullException(nameof(value));
 		}
 
 		private ISecurityMappingStorage _securityMappingStorage;
@@ -161,13 +155,7 @@ namespace StockSharp.Algo
 		public ISecurityMappingStorage SecurityMappingStorage
 		{
 			get => _securityMappingStorage;
-			set
-			{
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-
-				_securityMappingStorage = value;
-			}
+			set => _securityMappingStorage = value ?? throw new ArgumentNullException(nameof(value));
 		}
 
 		/// <summary>
@@ -204,11 +192,8 @@ namespace StockSharp.Algo
 		public BasketMessageAdapter(IdGenerator transactionIdGenerator, IPortfolioMessageAdapterProvider adapterProvider, IExchangeInfoProvider exchangeInfoProvider)
 			: base(transactionIdGenerator)
 		{
-			if (adapterProvider == null)
-				throw new ArgumentNullException(nameof(adapterProvider));
-
 			_innerAdapters = new InnerAdapterList();
-			AdapterProvider = adapterProvider;
+			AdapterProvider = adapterProvider ?? throw new ArgumentNullException(nameof(adapterProvider));
 			ExchangeInfoProvider = exchangeInfoProvider;
 
 			LatencyManager = new LatencyManager();
@@ -262,6 +247,11 @@ namespace StockSharp.Algo
 		/// Use <see cref="CandleBuilderMessageAdapter"/>.
 		/// </summary>
 		public bool SupportCandlesCompression { get; set; } = true;
+
+		/// <summary>
+		/// Use <see cref="OrderLogMessageAdapter"/>.
+		/// </summary>
+		public bool SupportBuildingFromOrderLog { get; set; } = true;
 
 		/// <inheritdoc />
 		public override IEnumerable<TimeSpan> TimeFrames
@@ -326,6 +316,11 @@ namespace StockSharp.Algo
 				adapter = new CommissionMessageAdapter(adapter) { CommissionManager = CommissionManager.Clone() };
 			}
 
+			if (SupportBuildingFromOrderLog)
+			{
+				adapter = new OrderLogMessageAdapter(adapter);
+			}
+
 			if (adapter.IsFullCandlesOnly)
 			{
 				adapter = new CandleHolderMessageAdapter(adapter);
@@ -367,7 +362,12 @@ namespace StockSharp.Algo
 				if (adapter == null)
 					throw new InvalidOperationException();
 
-				if (adapter != this)
+				if (adapter == this)
+				{
+					message.Adapter = null;
+					message.IsBack = false;
+				}
+				else
 				{
 					adapter.SendInMessage(message);
 					return;	
@@ -485,7 +485,7 @@ namespace StockSharp.Algo
 				return;
 			}
 
-			GetAdapters(message)?.ForEach(a => a.SendInMessage(message));
+			GetAdapters(message).ForEach(a => a.SendInMessage(message));
 		}
 
 		private IMessageAdapter[] GetAdapters(Message message)
@@ -496,16 +496,26 @@ namespace StockSharp.Algo
 			{
 				adapters = _messageTypeAdapters.TryGetValue(message.Type)?.Cache;
 
-				if (adapters != null && message.Type == MessageTypes.MarketData)
+				if (adapters != null)
 				{
-					var set = _subscriptionNonSupportedAdapters.TryGetValue(((MarketDataMessage)message).TransactionId);
-
-					if (set != null)
+					if (message.Type == MessageTypes.MarketData)
 					{
-						adapters = adapters.Where(a => !set.Contains(GetUnderlyingAdapter(a))).ToArray();
+						var set = _subscriptionNonSupportedAdapters.TryGetValue(((MarketDataMessage)message).TransactionId);
 
-						if (adapters.Length == 0)
-							adapters = null;
+						if (set != null)
+						{
+							adapters = adapters.Where(a => !set.Contains(GetUnderlyingAdapter(a))).ToArray();
+
+							if (adapters.Length == 0)
+								adapters = null;
+						}
+					}
+					else if (message.Type == MessageTypes.SecurityLookup)
+					{
+						var isAll = ((SecurityLookupMessage)message).IsLookupAll();
+
+						if (isAll)
+							adapters = adapters.Where(a => a.IsSupportSecuritiesLookupAll).ToArray();
 					}
 				}
 
@@ -514,13 +524,21 @@ namespace StockSharp.Algo
 					if (_pendingConnectAdapters.Count > 0)
 					{
 						_pendingMessages.Enqueue(message.Clone());
-						return null;
+						return ArrayHelper.Empty<IMessageAdapter>();
 					}
 				}
 			}
 
-			if (adapters == null || adapters.Length == 0)
-				throw new InvalidOperationException(LocalizedStrings.Str629Params.Put(message));
+			if (adapters == null)
+			{
+				adapters = ArrayHelper.Empty<IMessageAdapter>();
+			}
+
+			if (adapters.Length == 0)
+			{
+				this.AddWarningLog(LocalizedStrings.Str629Params.Put(message));
+				//throw new InvalidOperationException(LocalizedStrings.Str629Params.Put(message));
+			}
 
 			return adapters;
 		}
@@ -535,14 +553,24 @@ namespace StockSharp.Algo
 					return new[] { (IMessageAdapter)wrapper };
 			}
 
-			var adapters = GetAdapters(mdMsg)?.Where(a =>
+			var adapters = GetAdapters(mdMsg).Where(a =>
 			{
 				var isTfCandles = mdMsg.DataType == MarketDataTypes.CandleTimeFrame;
 
 				if (!a.IsMarketDataTypeSupported(mdMsg.DataType))
 				{
 					if (!isTfCandles)
+					{
+						if (mdMsg.DataType == MarketDataTypes.MarketDepth || mdMsg.DataType == MarketDataTypes.Trades)
+						{
+							if (a.IsMarketDataTypeSupported(MarketDataTypes.OrderLog))
+							{
+								return true;
+							}
+						}
+
 						return false;
+					}
 				}
 
 				if (!isTfCandles)
@@ -565,12 +593,12 @@ namespace StockSharp.Algo
 						return true;
 				}
 
-				var buildFrom = mdMsg.BuildCandlesFrom ?? a.SupportedMarketDataTypes.Intersect(CandleHelper.CandleDataSources).FirstOr();
+				var buildFrom = mdMsg.BuildFrom ?? a.SupportedMarketDataTypes.Intersect(CandleHelper.CandleDataSources).FirstOr();
 
 				return buildFrom != null && a.SupportedMarketDataTypes.Contains(buildFrom.Value);
 			}).ToArray();
 
-			if (adapters == null || adapters.Length == 0)
+			if (adapters.Length == 0)
 				throw new InvalidOperationException(LocalizedStrings.Str629Params.Put(mdMsg));
 
 			return adapters;
@@ -669,21 +697,16 @@ namespace StockSharp.Algo
 
 			if (adapter == null)
 			{
-				var adapters = GetAdapters(message);
+				adapter = GetAdapters(message).FirstOrDefault();
 
-				if (adapters == null)
+				if (adapter == null)
 					return;
-
-				adapter = adapters.First();
 			}
 			else
 			{
 				var a = _hearbeatAdapters.TryGetValue(adapter);
 
-				if (a == null)
-					throw new InvalidOperationException(LocalizedStrings.Str1838Params.Put(adapter.GetType()));
-
-				adapter = a;
+				adapter = a ?? throw new InvalidOperationException(LocalizedStrings.Str1838Params.Put(adapter.GetType()));
 			}
 
 			adapter.SendInMessage(message);
@@ -901,11 +924,16 @@ namespace StockSharp.Algo
 			{
 				lock (_connectedResponseLock)
 				{
-					var set = _subscriptionNonSupportedAdapters.SafeAdd(originalTransactionId, k => new HashSet<IMessageAdapter>());
-					set.Add(GetUnderlyingAdapter(adapter));
+					// try lookback only subscribe messages
+					if (originMsg.IsSubscribe)
+					{
+						var set = _subscriptionNonSupportedAdapters.SafeAdd(originalTransactionId, k => new HashSet<IMessageAdapter>());
+						set.Add(GetUnderlyingAdapter(adapter));
 
-					originMsg.Adapter = this;
-					originMsg.IsBack = true;
+						originMsg.Adapter = this;
+						originMsg.IsBack = true;
+					}
+					
 					SendOutMessage(originMsg);
 				}
 
@@ -962,6 +990,14 @@ namespace StockSharp.Algo
 
 					return s;
 				}).ToArray());
+
+				var pairs = AdapterProvider
+					.PortfolioAdapters
+					.Where(p => InnerAdapters.Contains(p.Value))
+					.Select(p => RefTuple.Create(p.Key, p.Value.Id))
+					.ToArray();
+
+				storage.SetValue(nameof(AdapterProvider), pairs);
 			}
 
 			if (LatencyManager != null)
@@ -989,6 +1025,8 @@ namespace StockSharp.Algo
 			{
 				InnerAdapters.Clear();
 
+				var adapters = new Dictionary<Guid, IMessageAdapter>();
+
 				foreach (var s in storage.GetValue<IEnumerable<SettingsStorage>>(nameof(InnerAdapters)))
 				{
 					try
@@ -996,10 +1034,23 @@ namespace StockSharp.Algo
 						var adapter = s.GetValue<Type>("AdapterType").CreateInstance<IMessageAdapter>(TransactionIdGenerator);
 						adapter.Load(s.GetValue<SettingsStorage>("AdapterSettings"));
 						InnerAdapters[adapter] = s.GetValue<int>("Priority");
+
+						adapters.Add(adapter.Id, adapter);
 					}
 					catch (Exception e)
 					{
 						e.LogError();
+					}
+				}
+
+				if (storage.ContainsKey(nameof(AdapterProvider)))
+				{
+					var mapping = storage.GetValue<RefPair<string, Guid>[]>(nameof(AdapterProvider));
+
+					foreach (var tuple in mapping)
+					{
+						if (adapters.TryGetValue(tuple.Second, out var adapter))
+							AdapterProvider.SetAdapter(tuple.First, adapter);
 					}
 				}
 			}
@@ -1041,6 +1092,7 @@ namespace StockSharp.Algo
 				SupportCandlesCompression = SupportCandlesCompression,
 				SuppressReconnectingErrors = SuppressReconnectingErrors,
 				IsRestoreSubscriptionOnReconnect = IsRestoreSubscriptionOnReconnect,
+				SupportBuildingFromOrderLog = SupportBuildingFromOrderLog,
 			};
 
 			clone.Load(this.Save());

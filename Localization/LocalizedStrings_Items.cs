@@ -20868,12 +20868,12 @@ namespace StockSharp.Localization
 		public static string Str2207Params => GetString(Str2207ParamsKey);
 
 		/// <summary>
-		/// For {0} {1} {2} ({3} were loaded).
+		/// For {0} {1} {2} were loaded.
 		/// </summary>
 		public const string Str2208ParamsKey = nameof(Str2208Params);
 
 		/// <summary>
-		/// For {0} {1} {2} ({3} were loaded).
+		/// For {0} {1} {2} were loaded.
 		/// </summary>
 		public static string Str2208Params => GetString(Str2208ParamsKey);
 
@@ -24908,12 +24908,12 @@ namespace StockSharp.Localization
 		public static string Str2657 => GetString(Str2657Key);
 
 		/// <summary>
-		/// Futures: 20 quotes deep market depth
+		/// Futures: 5 quotes deep market depth
 		/// </summary>
 		public const string Str2658Key = nameof(Str2658);
 
 		/// <summary>
-		/// Futures: 20 quotes deep market depth
+		/// Futures: 5 quotes deep market depth
 		/// </summary>
 		public static string Str2658 => GetString(Str2658Key);
 
@@ -39408,16 +39408,6 @@ namespace StockSharp.Localization
 		public static string XamlStr626 => GetString(XamlStr626Key);
 
 		/// <summary>
-		/// Reset
-		/// </summary>
-		public const string XamlStr627Key = nameof(XamlStr627);
-
-		/// <summary>
-		/// Reset
-		/// </summary>
-		public static string XamlStr627 => GetString(XamlStr627Key);
-
-		/// <summary>
 		/// Reset current date modification
 		/// </summary>
 		public const string XamlStr628Key = nameof(XamlStr628);
@@ -40578,12 +40568,12 @@ namespace StockSharp.Localization
 		public static string XamlStr814 => GetString(XamlStr814Key);
 
 		/// <summary>
-		/// Storage format:
+		/// Storage format
 		/// </summary>
 		public const string StorageFormatKey = nameof(StorageFormat);
 
 		/// <summary>
-		/// Storage format:
+		/// Storage format
 		/// </summary>
 		public static string StorageFormat => GetString(StorageFormatKey);
 
@@ -40708,12 +40698,12 @@ namespace StockSharp.Localization
 		public static string XamlStr846 => GetString(XamlStr846Key);
 
 		/// <summary>
-		/// Expiration (hh:mm):
+		/// Expiration
 		/// </summary>
 		public const string XamlStr848Key = nameof(XamlStr848);
 
 		/// <summary>
-		/// Expiration (hh:mm):
+		/// Expiration
 		/// </summary>
 		public static string XamlStr848 => GetString(XamlStr848Key);
 
@@ -47618,24 +47608,24 @@ namespace StockSharp.Localization
 		public static string Mode => GetString(ModeKey);
 
 		/// <summary>
-		/// Build candles mode.
+		/// Build mode.
 		/// </summary>
-		public const string CandlesBuildModeKey = nameof(CandlesBuildMode);
+		public const string BuildModeKey = nameof(BuildMode);
 
 		/// <summary>
-		/// Build candles mode.
+		/// Build mode.
 		/// </summary>
-		public static string CandlesBuildMode => GetString(CandlesBuildModeKey);
+		public static string BuildMode => GetString(BuildModeKey);
 
 		/// <summary>
-		/// Which market-data type is used as an candle source value.
+		/// Which market-data type is used as a source value.
 		/// </summary>
-		public const string BuildCandlesFromKey = nameof(BuildCandlesFrom);
+		public const string BuildFromKey = nameof(BuildFrom);
 
 		/// <summary>
-		/// Which market-data type is used as an candle source value.
+		/// Which market-data type is used as a source value.
 		/// </summary>
-		public static string BuildCandlesFrom => GetString(BuildCandlesFromKey);
+		public static string BuildFrom => GetString(BuildFromKey);
 
 		/// <summary>
 		/// Level1 field.
@@ -48056,5 +48046,135 @@ namespace StockSharp.Localization
 		/// Tasks '{0}' are running for all instruments. Often these are incorrect settings. It is recommended to set specific instruments for each task. Do you want to continue as is or stop the launch?
 		/// </summary>
 		public static string TasksAllInstruments => GetString(TasksAllInstrumentsKey);
+
+		/// <summary>
+		/// Schema
+		/// </summary>
+		public const string SchemaKey = nameof(Schema);
+
+		/// <summary>
+		/// Schema
+		/// </summary>
+		public static string Schema => GetString(SchemaKey);
+
+		/// <summary>
+		/// Alert type
+		/// </summary>
+		public const string AlertTypeKey = nameof(AlertType);
+
+		/// <summary>
+		/// Alert type
+		/// </summary>
+		public static string AlertType => GetString(AlertTypeKey);
+
+		/// <summary>
+		/// Alerts
+		/// </summary>
+		public const string AlertsKey = nameof(Alerts);
+
+		/// <summary>
+		/// Alerts
+		/// </summary>
+		public static string Alerts => GetString(AlertsKey);
+
+		/// <summary>
+		/// Alerts settings.
+		/// </summary>
+		public const string AlertsSettingsKey = nameof(AlertsSettings);
+
+		/// <summary>
+		/// Alerts settings.
+		/// </summary>
+		public static string AlertsSettings => GetString(AlertsSettingsKey);
+
+		/// <summary>
+		/// The position by the instrument.
+		/// </summary>
+		public const string PositionDescKey = nameof(PositionDesc);
+
+		/// <summary>
+		/// The position by the instrument.
+		/// </summary>
+		public static string PositionDesc => GetString(PositionDescKey);
+
+		/// <summary>
+		/// Level1 market data.
+		/// </summary>
+		public const string Level1MarketDataKey = nameof(Level1MarketData);
+
+		/// <summary>
+		/// Level1 market data.
+		/// </summary>
+		public static string Level1MarketData => GetString(Level1MarketDataKey);
+
+		/// <summary>
+		/// Use web sockets.
+		/// </summary>
+		public const string UseWebSocketsKey = nameof(UseWebSockets);
+
+		/// <summary>
+		/// Use web sockets.
+		/// </summary>
+		public static string UseWebSockets => GetString(UseWebSocketsKey);
+
+		/// <summary>
+		/// View downloaded
+		/// </summary>
+		public const string ViewDownloadedKey = nameof(ViewDownloaded);
+
+		/// <summary>
+		/// View downloaded
+		/// </summary>
+		public static string ViewDownloaded => GetString(ViewDownloadedKey);
+
+		/// <summary>
+		/// Balance check interval. Required in case of deposit and withdraw actions.
+		/// </summary>
+		public const string BalanceCheckIntervalKey = nameof(BalanceCheckInterval);
+
+		/// <summary>
+		/// Balance check interval. Required in case of deposit and withdraw actions.
+		/// </summary>
+		public static string BalanceCheckInterval => GetString(BalanceCheckIntervalKey);
+
+		/// <summary>
+		/// HADAX
+		/// </summary>
+		public const string HadaxKey = nameof(Hadax);
+
+		/// <summary>
+		/// HADAX
+		/// </summary>
+		public static string Hadax => GetString(HadaxKey);
+
+		/// <summary>
+		/// Use HADAX.
+		/// </summary>
+		public const string UseHadaxKey = nameof(UseHadax);
+
+		/// <summary>
+		/// Use HADAX.
+		/// </summary>
+		public static string UseHadax => GetString(UseHadaxKey);
+
+		/// <summary>
+		/// Truncated order book
+		/// </summary>
+		public const string TruncatedBookKey = nameof(TruncatedBook);
+
+		/// <summary>
+		/// Truncated order book
+		/// </summary>
+		public static string TruncatedBook => GetString(TruncatedBookKey);
+
+		/// <summary>
+		/// Truncate market depth element.
+		/// </summary>
+		public const string TruncatedBookDescKey = nameof(TruncatedBookDesc);
+
+		/// <summary>
+		/// Truncate market depth element.
+		/// </summary>
+		public static string TruncatedBookDesc => GetString(TruncatedBookDescKey);
 	}
 }
