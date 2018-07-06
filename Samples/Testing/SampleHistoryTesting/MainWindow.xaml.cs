@@ -13,6 +13,9 @@ Created: 2015, 11, 11, 2:32 PM
 Copyright 2010 by StockSharp, LLC
 *******************************************************************************************/
 #endregion S# License
+
+using DevExpress.Xpf.Core;
+
 namespace SampleHistoryTesting
 {
 	using System;
@@ -723,6 +726,15 @@ namespace SampleHistoryTesting
 		private void SetIsChartEnabled(IChart chart, bool started)
 		{
 			this.GuiAsync(() => chart.IsAutoRange = started);
+		}
+
+		private void OnThemeSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			var theme = (string)((ComboBoxItem)Theme.SelectedValue).Content;
+			if (theme.IsEmpty())
+				return;
+
+			ApplicationThemeHelper.ApplicationThemeName = theme;
 		}
 	}
 }

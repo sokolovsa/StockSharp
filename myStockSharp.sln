@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community", "Community\Comm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleHistoryTestingPublic", "Samples\Testing\SampleHistoryTesting\SampleHistoryTestingPublic.csproj", "{20A454D0-A030-4266-80C0-D7CB07CE6876}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleOptionQuotingPublic", "Samples\Options\SampleOptionQuoting\SampleOptionQuotingPublic.csproj", "{3A39B4AA-55BC-4E74-8F2D-27CDD67B7E13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{20A454D0-A030-4266-80C0-D7CB07CE6876}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20A454D0-A030-4266-80C0-D7CB07CE6876}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20A454D0-A030-4266-80C0-D7CB07CE6876}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A39B4AA-55BC-4E74-8F2D-27CDD67B7E13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A39B4AA-55BC-4E74-8F2D-27CDD67B7E13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A39B4AA-55BC-4E74-8F2D-27CDD67B7E13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A39B4AA-55BC-4E74-8F2D-27CDD67B7E13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

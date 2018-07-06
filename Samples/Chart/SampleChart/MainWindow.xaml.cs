@@ -248,7 +248,7 @@ namespace SampleChart
 			var format = Format.SelectedFormat;
 
 			var maxDays = (isBuild || series.CandleType != typeof(TimeFrameCandle))
-				? 5
+				? 2
 				: 30 * (int)((TimeSpan)series.Arg).TotalMinutes;
 
 			_mdMsg = series.ToMarketDataMessage(true);
