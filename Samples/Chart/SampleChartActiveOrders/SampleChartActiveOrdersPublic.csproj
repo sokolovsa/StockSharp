@@ -62,11 +62,11 @@
     <Reference Include="MoreLinq">
       <HintPath>..\..\..\References\MoreLinq.dll</HintPath>
     </Reference>
-    <Reference Include="StockSharp.Xaml.Charting, Version=4.3.25.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="StockSharp.Xaml, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>z:\ss\bin\xaml.charting\_ref\StockSharp.Xaml.Charting.dll</HintPath>
     </Reference>
-    <Reference Include="StockSharp.Xaml, Version=4.3.25.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="StockSharp.Xaml.Charting, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>z:\ss\bin\xaml.charting\_ref\StockSharp.Xaml.dll</HintPath>
     </Reference>
