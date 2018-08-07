@@ -21,7 +21,6 @@ namespace StockSharp.Algo.Indicators
 	using System.Linq;
 
 	using Ecng.Serialization;
-	using Ecng.Collections;
 
 	using MoreLinq;
 
@@ -46,10 +45,6 @@ namespace StockSharp.Algo.Indicators
 	/// </summary>
 	public abstract class BaseComplexIndicator : BaseIndicator, IComplexIndicator
 	{
-		private bool _resetting;
-
-		private sealed class InnerIndicatorsCollection : BaseList<IIndicator> {}
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BaseComplexIndicator"/>.
 		/// </summary>
@@ -62,13 +57,7 @@ namespace StockSharp.Algo.Indicators
 			if (innerIndicators.Any(i => i == null))
 				throw new ArgumentException(nameof(innerIndicators));
 
-			var coll = new InnerIndicatorsCollection();
-			InnerIndicators = coll;
-
-			coll.Added    +=     ind  => { ind.Reseted += Reset; };
-			coll.Inserted += (i, ind) => { ind.Reseted += Reset; };
-
-			InnerIndicators.AddRange(innerIndicators);
+			InnerIndicators = new List<IIndicator>(innerIndicators);
 
 			Mode = ComplexIndicatorModes.Parallel;
 		}
@@ -134,19 +123,8 @@ namespace StockSharp.Algo.Indicators
 		/// </summary>
 		public override void Reset()
 		{
-			if(_resetting)
-				return;
-
-			_resetting = true;
-			try
-			{
-				InnerIndicators.ForEach(i => i.Reset());
-				base.Reset();
-			}
-			finally
-			{
-				_resetting = false;
-			}
+			base.Reset();
+			InnerIndicators.ForEach(i => i.Reset());
 		}
 
 		/// <summary>
