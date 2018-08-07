@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>StockSharp.Configuration</RootNamespace>
     <AssemblyName>StockSharp.Configuration</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -35,8 +35,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.Xpf.Core.v17.2">
-      <HintPath>..\References\DevExpress.Xpf.Core.v17.2.dll</HintPath>
+    <Reference Include="DevExpress.Xpf.Core.v18.1">
+      <HintPath>..\References\DevExpress.Xpf.Core.v18.1.dll</HintPath>
     </Reference>
     <Reference Include="Ecng.Collections">
       <HintPath>z:\ss\bin\ecng\_ref\Ecng.Collections.dll</HintPath>
@@ -72,6 +72,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="StockSharp.Bitbank">
+      <HintPath>..\References\StockSharp.Bitbank.dll</HintPath>
+    </Reference>
     <Reference Include="StockSharp.Bitfinex">
       <HintPath>..\References\StockSharp.Bitfinex.dll</HintPath>
     </Reference>
@@ -171,6 +174,9 @@
     <Reference Include="StockSharp.Quik">
       <HintPath>..\References\StockSharp.Quik.dll</HintPath>
     </Reference>
+    <Reference Include="StockSharp.Quoinex">
+      <HintPath>..\References\StockSharp.Quoinex.dll</HintPath>
+    </Reference>
     <Reference Include="StockSharp.Rithmic">
       <HintPath>..\References\StockSharp.Rithmic.dll</HintPath>
     </Reference>
@@ -227,6 +233,15 @@
     </Reference>
     <Reference Include="StockSharp.Yobit">
       <HintPath>..\References\StockSharp.Yobit.dll</HintPath>
+    </Reference>
+    <Reference Include="StockSharp.AlphaVantage">
+      <HintPath>..\References\StockSharp.AlphaVantage.dll</HintPath>
+    </Reference>
+    <Reference Include="StockSharp.IEX">
+      <HintPath>..\References\StockSharp.IEX.dll</HintPath>
+    </Reference>
+    <Reference Include="StockSharp.Zaif">
+      <HintPath>..\References\StockSharp.Zaif.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
