@@ -41,6 +41,12 @@
     <ApplicationIcon>..\..\..\References\stocksharp.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="StockSharp.Xaml">
+      <HintPath>..\..\..\..\bin\xaml.charting\_ref\StockSharp.Xaml.dll</HintPath>
+    </Reference>
+    <Reference Include="StockSharp.Xaml.Charting">
+      <HintPath>..\..\..\..\bin\xaml.charting\_ref\StockSharp.Xaml.Charting.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -82,14 +88,6 @@
     </Reference>
     <Reference Include="DevExpress.Xpf.LayoutControl.v18.1">
       <HintPath>..\..\..\References\DevExpress.Xpf.LayoutControl.v18.1.dll</HintPath>
-    </Reference>
-    <Reference Include="StockSharp.Xaml.Charting, Version=4.3.25.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>z:\ss\bin\xaml.charting\_ref\StockSharp.Xaml.Charting.dll</HintPath>
-    </Reference>
-    <Reference Include="StockSharp.Xaml, Version=4.3.25.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>z:\ss\bin\xaml.charting\_ref\StockSharp.Xaml.dll</HintPath>
     </Reference>
     <Reference Include="StockSharp.Algo.Strategies, Version=4.3.25.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

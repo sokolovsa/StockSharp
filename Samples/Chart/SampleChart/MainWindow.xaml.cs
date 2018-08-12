@@ -414,7 +414,7 @@ namespace SampleChart
 				}
 			}
 
-			_lastTime += TimeSpan.FromSeconds(RandomGen.GetInt(1, 10));
+			_lastTime += TimeSpan.FromMilliseconds(RandomGen.GetInt(100, 2000));
 		}
 
 		private void DrawChartElements()

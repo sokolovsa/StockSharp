@@ -41,9 +41,6 @@
     <ApplicationIcon>..\..\..\References\stocksharp.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.Xpf.Themes.Office2016White.v17.2">
-      <HintPath>..\..\..\References\DevExpress.Xpf.Themes.Office2016White.v17.2.dll</HintPath>
-    </Reference>
     <Reference Include="Ecng.Collections">
       <HintPath>z:\ss\bin\ecng\_ref\Ecng.Collections.dll</HintPath>
     </Reference>
@@ -65,13 +62,13 @@
     <Reference Include="MoreLinq">
       <HintPath>..\..\..\References\MoreLinq.dll</HintPath>
     </Reference>
-    <Reference Include="StockSharp.Xaml, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="StockSharp.Xaml, Version=4.4.13.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>z:\ss\bin\xaml.charting\_ref\StockSharp.Xaml.Charting.dll</HintPath>
+      <HintPath>..\..\..\..\bin\xaml.charting\_ref\StockSharp.Xaml.dll</HintPath>
     </Reference>
-    <Reference Include="StockSharp.Xaml.Charting, Version=4.4.12.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="StockSharp.Xaml.Charting, Version=4.4.13.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>z:\ss\bin\xaml.charting\_ref\StockSharp.Xaml.dll</HintPath>
+      <HintPath>..\..\..\..\bin\xaml.charting\_ref\StockSharp.Xaml.Charting.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
