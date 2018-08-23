@@ -7,8 +7,7 @@
 		xmlns:ex="clr-namespace:Ecng.Xaml.Converters;assembly=Ecng.Xaml"
         xmlns:charting="http://schemas.stocksharp.com/xaml"
         xmlns:xaml="clr-namespace:Ecng.Xaml;assembly=Ecng.Xaml"
-        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core">
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors">
 
 	<Window.Resources>
 		<ex:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseVisibilityValue="Hidden" />
@@ -270,20 +269,6 @@
 
 		<GridSplitter Grid.Column="1" ResizeDirection="Columns" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
 
-		<Grid Grid.Column="2">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="*"/>
-			</Grid.RowDefinitions>
-
-			<ComboBox Margin="10,0,0,0" x:Name="Theme" SelectionChanged="OnThemeSelectionChanged" VerticalAlignment="Center" Width="150">
-				<ComboBoxItem Content="{x:Static dx:Theme.Office2016BlackName}"/>
-				<ComboBoxItem Content="{x:Static dx:Theme.Office2016WhiteName}"/>
-				<ComboBoxItem Content="{x:Static dx:Theme.MetropolisDarkName}"/>
-				<ComboBoxItem Content="{x:Static dx:Theme.MetropolisLightName}"/>
-			</ComboBox>
-
-			<sx:MarketDepthControl Grid.Row="1" x:Name="MarketDepth" />
-		</Grid>
+		<sx:MarketDepthControl Grid.Column="2" x:Name="MarketDepth" />
 	</Grid>
 </Window>
