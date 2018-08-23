@@ -25,6 +25,7 @@ namespace StockSharp.Algo
 
 	using MoreLinq;
 
+	using StockSharp.Algo.Candles;
 	using StockSharp.Algo.Risk;
 	using StockSharp.Algo.Storages;
 	using StockSharp.BusinessEntities;
@@ -310,7 +311,7 @@ namespace StockSharp.Algo
 
 					if (_entityRegistry != null && _storageRegistry != null && _snapshotRegistry != null)
 					{
-						_inAdapter = StorageAdapter = new StorageMessageAdapter(_inAdapter, _entityRegistry, _storageRegistry, _snapshotRegistry)
+						_inAdapter = StorageAdapter = new StorageMessageAdapter(_inAdapter, _entityRegistry, _storageRegistry, _snapshotRegistry, _adapter.CandleBuilderProvider)
 						{
 							OwnInnerAdaper = true,
 							OverrideSecurityData = OverrideSecurityData
@@ -1890,19 +1891,21 @@ namespace StockSharp.Algo
 			RaiseCandleSeriesProcessing(series, candle);
 		}
 
-		private void ProcessMarketDataFinishedMessage(MarketDataFinishedMessage message)
-		{
-			ProcessCandleSeriesStopped(message.OriginalTransactionId);
-		}
-
-		private void ProcessCandleSeriesStopped(long originalTransactionId)
+		private CandleSeries ProcessCandleSeriesStopped(long originalTransactionId)
 		{
 			var series = _entityCache.RemoveCandleSeries(originalTransactionId);
 
-			if (series == null)
-				return;
+			if (series != null)
+				RaiseCandleSeriesStopped(series);
 
-			RaiseCandleSeriesStopped(series);
+			return series;
+		}
+
+		private void ProcessMarketDataFinishedMessage(MarketDataFinishedMessage message)
+		{
+			var series = ProcessCandleSeriesStopped(message.OriginalTransactionId);
+			var security = series?.Security ?? _subscriptionManager.TryGetSecurity(message.OriginalTransactionId);
+			RaiseMarketDataSubscriptionFinished(security, message);
 		}
 	}
 }

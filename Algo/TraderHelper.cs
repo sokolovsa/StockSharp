@@ -4646,5 +4646,48 @@ namespace StockSharp.Algo
 
 			return provider.GetAdapter(portfolio.Name);
 		}
+
+		/// <summary>
+		/// Get available candles types.
+		/// </summary>
+		/// <param name="dataTypes">Data types.</param>
+		/// <returns>Candles types.</returns>
+		public static IEnumerable<DataType> TimeFrameCandles(this IEnumerable<DataType> dataTypes)
+		{
+			return dataTypes.Where(t => t.MessageType == typeof(TimeFrameCandleMessage));
+		}
+
+		/// <summary>
+		/// Convert inner securities messages to basket.
+		/// </summary>
+		/// <typeparam name="TMessage">Message type.</typeparam>
+		/// <param name="innerSecMessages">Inner securities messages.</param>
+		/// <param name="security">Basket security.</param>
+		/// <param name="processorProvider">Basket security processors provider.</param>
+		/// <returns>Messages of basket securities.</returns>
+		public static IEnumerable<TMessage> ToBasket<TMessage>(this IEnumerable<TMessage> innerSecMessages, BasketSecurity security, IBasketSecurityProcessorProvider processorProvider)
+			where TMessage : Message
+		{
+			var processor = processorProvider.CreateProcessor(security);
+
+			return innerSecMessages.SelectMany(processor.Process).Cast<TMessage>();
+		}
+
+		/// <summary>
+		/// Create market data processor for basket securities.
+		/// </summary>
+		/// <param name="processorProvider">Basket security processors provider.</param>
+		/// <param name="security">Basket security.</param>
+		/// <returns>Market data processor for basket securities.</returns>
+		public static IBasketSecurityProcessor CreateProcessor(this IBasketSecurityProcessorProvider processorProvider, BasketSecurity security)
+		{
+			if (processorProvider == null)
+				throw new ArgumentNullException(nameof(processorProvider));
+
+			if (security == null)
+				throw new ArgumentNullException(nameof(security));
+
+			return processorProvider.GetProcessorType(security.TryGetBasketExpression(out _)).CreateInstance<IBasketSecurityProcessor>(security);
+		}
 	}
 }

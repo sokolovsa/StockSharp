@@ -393,6 +393,7 @@ E:StockSharp.BusinessEntities.IConnector.MarketDataSubscriptionSucceeded/summary
 E:StockSharp.BusinessEntities.IConnector.MarketDataSubscriptionFailed/summary;DocStr896
 E:StockSharp.BusinessEntities.IConnector.MarketDataUnSubscriptionSucceeded/summary;DocStr9350
 E:StockSharp.BusinessEntities.IConnector.MarketDataUnSubscriptionFailed/summary;DocStr9351
+E:StockSharp.BusinessEntities.IConnector.MarketDataSubscriptionFinished/summary;DocStr10596
 E:StockSharp.BusinessEntities.IConnector.SessionStateChanged/summary;DocStr897
 P:StockSharp.BusinessEntities.IConnector.TransactionIdGenerator/summary;DocStr3311
 M:StockSharp.BusinessEntities.IConnector.GetSessionState(StockSharp.BusinessEntities.ExchangeBoard)/summary;DocStr803
@@ -871,6 +872,9 @@ M:StockSharp.BusinessEntities.Security.CopyTo(StockSharp.BusinessEntities.Securi
 M:StockSharp.BusinessEntities.Security.CopyTo(StockSharp.BusinessEntities.Security)/param/destination;DocStr2621
 M:StockSharp.BusinessEntities.Security.Notify(System.String)/summary;DocStr466
 M:StockSharp.BusinessEntities.Security.Notify(System.String)/param/propName;DocStr2622
+M:StockSharp.BusinessEntities.Security.TryGetBasketExpression(StockSharp.Messages.SecurityId[]@)/summary;DocStr10602
+M:StockSharp.BusinessEntities.Security.TryGetBasketExpression(StockSharp.Messages.SecurityId[]@)/param/legs;DocStr10603
+M:StockSharp.BusinessEntities.Security.TryGetBasketExpression(StockSharp.Messages.SecurityId[]@)/returns;DocStr10600
 T:StockSharp.BusinessEntities.SecurityExternalId/summary;Str603
 M:StockSharp.BusinessEntities.SecurityExternalId.#ctor/summary;DocStr1
 P:StockSharp.BusinessEntities.SecurityExternalId.Sedol/summary;Str351

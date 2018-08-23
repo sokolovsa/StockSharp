@@ -87,6 +87,11 @@ namespace StockSharp.Algo.Testing
 		public ISecurityProvider SecurityProvider { get; }
 
 		/// <summary>
+		/// Basket security processors provider.
+		/// </summary>
+		public IBasketSecurityProcessorProvider ProcessorProvider { get; set; }
+
+		/// <summary>
 		/// The interval of message <see cref="TimeMessage"/> generation. By default, it is equal to 1 sec.
 		/// </summary>
 		[CategoryLoc(LocalizedStrings.Str186Key)]
@@ -253,7 +258,7 @@ namespace StockSharp.Algo.Testing
 
 			return DriveInternal
 				.GetAvailableDataTypes(securityId, StorageFormat)
-				.Where(t => t.MessageType == typeof(TimeFrameCandleMessage))
+				.TimeFrameCandles()
 				.Select(t => (TimeSpan)t.Arg)
 				.Distinct()
 				.OrderBy()
@@ -314,7 +319,7 @@ namespace StockSharp.Algo.Testing
 
 					var securities = lookupMsg.SecurityId.IsDefault() 
 							? SecurityProvider.LookupAll() 
-							: SecurityProvider.Lookup(lookupMsg.ToSecurity(StorageRegistry.ExchangeInfoProvider));
+							: SecurityProvider.Lookup(lookupMsg.ToSecurity(StorageRegistry.ExchangeInfoProvider, ProcessorProvider));
 
 					securities.ForEach(security =>
 					{

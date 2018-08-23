@@ -1,5 +1,24 @@
 StockSharp API Change log
 ========================
+## current:
+* (feature) Message. IgnoreOffline -> OfflineMode.
+* (feature) SampleSmartCandles removed.
+* (bug) SmartCOM. Fix candles and historical ticks requests.
+* (bug) LocalMarketDataDrive. GetAvailableDataTypes fix.
+* (bug) CandleBuilderMessageAdapter. Fix start date for compression subscriptions.
+* (feature) IConnector. MarketDataSubscriptionFinished event to notify end of subscription packet.
+* (feature) Diagram. Options elements description.
+* (feature) Plaza. Spectra 6.1 supported.
+* (feature) TWIME. 3.1 supported.
+* (feature) Algo.Expressions. Moved to Algo proj.
+* (feature) IBasketSecurityProcessorProvider. Basket securities refactoring.
+* (feature) BaseGridControl. Autoscroll added.
+* (feature) Bitfinex. Market data v2 API.
+* (feature) Bithumb. WebSocket support.
+* (feature) CandleBuilderProvider. Ability to register own CandleBuilder-s.
+* (bug) CandleBuilderMessageAdapter. Fix non time-frame based candles processing.
+* (feature) MarketDataGenerator. Set Interval default value.
+
 ## v4.4.13:
 * (bug) Monitor.Clear fix.
 * (bug) Candles. Fix process error response in case of multiples connections.
@@ -46,7 +65,6 @@ StockSharp API Change log
 * (feature) FixServer. Auto unsubscribe for disconnected sessions.
 * (bug) CommissionRule. Fix rules processing with percentage values.
 * (feature) AlfaDirect. v4.0 support (market data only).
-* (feature) Message. IgnoreOffline -> OfflineMode.
 
 ## v4.4.12:
 * (feature) Crypto connectors. BalanceCheckInterval for refresh an account balances in case of deposit and withdraw operation.
