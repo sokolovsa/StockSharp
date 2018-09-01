@@ -47,6 +47,7 @@ namespace SampleChart
 	using StockSharp.BusinessEntities;
 	using StockSharp.Configuration;
 	using StockSharp.Localization;
+	using StockSharp.Logging;
 	using StockSharp.Messages;
 	using StockSharp.Xaml.Charting;
 
@@ -349,8 +350,8 @@ namespace SampleChart
 
 				BusyIndicator.IsBusy = false;
 				Chart.IsAutoRange = false;
-				_btnModifyAnnotation.IsEnabled = true;
-				_btnNewAnnotation.IsEnabled = true;
+				ModifyAnnotationBtn.IsEnabled = true;
+				NewAnnotationBtn.IsEnabled = true;
 
 			}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
@@ -386,6 +387,10 @@ namespace SampleChart
 				var now = DateTime.UtcNow;
 				DoIfTime(UpdateRealtimeCandles, now, ref _lastRealtimeUpdateTime, _realtimeInterval);
 				DoIfTime(DrawChartElements,     now, ref _lastDrawTime,           _drawInterval);
+			}
+			catch (Exception ex)
+			{
+				ex.LogError();
 			}
 			finally
 			{
@@ -529,14 +534,14 @@ namespace SampleChart
 
 		private void ModifyAnnotation(bool isNew)
 		{
-			Brush randomBrush()
+			Brush RandomBrush()
 			{
 				var b = new SolidColorBrush(Color.FromRgb((byte)RandomGen.GetInt(0, 255), (byte)RandomGen.GetInt(0, 255), (byte)RandomGen.GetInt(0, 255)));
 				b.Freeze();
 				return b;
 			}
 
-			if(_annotation == null)
+			if (_annotation == null)
 				return;
 
 			IComparable x1, x2, y1, y2;
@@ -590,9 +595,9 @@ namespace SampleChart
 					Y1 = y1,
 					Y2 = y2,
 					IsVisible = true,
-					Fill = randomBrush(),
-					Stroke = randomBrush(),
-					Foreground = randomBrush(),
+					Fill = RandomBrush(),
+					Stroke = RandomBrush(),
+					Foreground = RandomBrush(),
 					Thickness = new Thickness(RandomGen.GetInt(1, 5)),
 				};
 
@@ -615,13 +620,12 @@ namespace SampleChart
 
 		private void NewAnnotation_Click(object sender, RoutedEventArgs e)
 		{
-			if(_currCandle == null)
+			if (_currCandle == null)
 				return;
 
-			var values = Enum.GetValues(typeof(ChartAnnotationTypes));
-			var atype = (ChartAnnotationTypes)values.GetValue(RandomGen.GetInt(1, values.Length - 1));
+			var values = Enumerator.GetValues<ChartAnnotationTypes>().ToArray();
 
-			_annotation = new ChartAnnotation(atype);
+			_annotation = new ChartAnnotation { Type = values[RandomGen.GetInt(1, values.Length - 1)] };
 			_annotationData = null;
 
 			Chart.AddElement(_areaComb, _annotation);
