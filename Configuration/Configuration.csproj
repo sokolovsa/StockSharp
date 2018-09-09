@@ -64,6 +64,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>z:\ss\bin\xaml.charting\_ref\StockSharp.Xaml.Charting.dll</HintPath>
     </Reference>
+    <Reference Include="StockSharp.Xaml.Diagram, Version=4.3.25.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>z:\ss\bin\xaml.charting\_ref\StockSharp.Xaml.Diagram.dll</HintPath>
+    </Reference>
     <Reference Include="StockSharp.Xaml, Version=4.3.25.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>z:\ss\bin\xaml.charting\_ref\StockSharp.Xaml.dll</HintPath>
@@ -132,9 +136,6 @@
     </Reference>
     <Reference Include="StockSharp.Fxcm">
       <HintPath>..\References\StockSharp.Fxcm.dll</HintPath>
-    </Reference>
-    <Reference Include="StockSharp.Xaml.Diagram">
-      <HintPath>..\References\StockSharp.Xaml.Diagram.dll</HintPath>
     </Reference>
     <Reference Include="StockSharp.AlfaDirect">
       <HintPath>..\References\StockSharp.AlfaDirect.dll</HintPath>
