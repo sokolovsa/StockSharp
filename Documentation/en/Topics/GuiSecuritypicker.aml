@@ -8,6 +8,7 @@
       (level1 fields), as shown in the
       <link xlink:href="de52af78-ec80-45b4-9820-0052f8add762">SecurityGrid</link> section.
       </para>
+      <mediaLink><image placement="left" xlink:href="GUI_SecurityPicker2" /></mediaLink>
       <para>
       	<codeEntityReference>T:StockSharp.Xaml.SecurityPicker</codeEntityReference> consists of:
       </para>	
@@ -70,17 +71,17 @@
 	  </list>
 	  
       <para>
-Below is the appearance of the component and the code snippet with its using, taken from example <legacyItalic>Samples/OpenECry/SampleOEC</legacyItalic>.
+Below is the code snippet with its use, taken from example <legacyItalic>Samples/InteractiveBrokers/SampleIB</legacyItalic>.
       </para>
  <section>
  
  <sections>
  	<section address="SubSection1">
      	<content>
-              <mediaLink><image placement="left" xlink:href="GUI_SecurityPicker2" /></mediaLink>	
+              	
               <code title="XAML" language="XAML">
 	  		<![CDATA[
-<Window x:Class="SampleOEC.SecuritiesWindow"
+<Window x:Class="SampleIB.SecuritiesWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:loc="clr-namespace:StockSharp.Localization;assembly=StockSharp.Localization"
