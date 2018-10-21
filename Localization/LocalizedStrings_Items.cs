@@ -19,32 +19,32 @@ namespace StockSharp.Localization
 	{
 		/// <summary>
 		/// Element axis is not set.
-		/// </summary
+		/// </summary>
 		public const string AxisIsNotSetKey = nameof(AxisIsNotSet);
 
 		/// <summary>
 		/// Element axis is not set.
-		/// </summary
+		/// </summary>
 		public static string AxisIsNotSet => GetString(AxisIsNotSetKey);
 
 		/// <summary>
 		/// Unable to remove default axis.
-		/// </summary
+		/// </summary>
 		public const string ErrorRemovingDefaultAxisKey = nameof(ErrorRemovingDefaultAxis);
 
 		/// <summary>
 		/// Unable to remove default axis.
-		/// </summary
+		/// </summary>
 		public static string ErrorRemovingDefaultAxis => GetString(ErrorRemovingDefaultAxisKey);
 
 		/// <summary>
 		/// Source values.
-        /// </summary
+		/// </summary>
 		public const string SourceValuesKey = nameof(SourceValues);
 
 		/// <summary>
 		/// Source values.
-        /// </summary
+		/// </summary>
 		public static string SourceValues => GetString(SourceValuesKey);
 
 		/// <summary>
@@ -5368,12 +5368,12 @@ namespace StockSharp.Localization
 		public static string Str533 => GetString(Str533Key);
 
 		/// <summary>
-		/// {0}/{1} {2} Price={3} Volume={4} State={5} Bal={6}
+		/// {0}/{1} {2} {3} {4} Price={5} Volume={6} State={7} Bal={8} State={9}
 		/// </summary>
 		public const string Str534ParamsKey = nameof(Str534Params);
 
 		/// <summary>
-		/// {0}/{1} {2} Price={3} Volume={4} State={5} Bal={6}
+		/// {0}/{1} {2} {3} {4} Price={5} Volume={6} State={7} Bal={8} State={9}
 		/// </summary>
 		public static string Str534Params => GetString(Str534ParamsKey);
 
@@ -48596,5 +48596,25 @@ namespace StockSharp.Localization
 		/// To close the tab {0} strategy must be stopped. Stop strategy?
 		/// </summary>
 		public static string StopStrategyOnTabClosing => GetString(StopStrategyOnTabClosingKey);
+
+		/// <summary>
+		/// Commission (taker)
+		/// </summary>
+		public const string CommissionTakerKey = nameof(CommissionTaker);
+
+		/// <summary>
+		/// Commission (taker)
+		/// </summary>
+		public static string CommissionTaker => GetString(CommissionTakerKey);
+
+		/// <summary>
+		/// Commission (maker)
+		/// </summary>
+		public const string CommissionMakerKey = nameof(CommissionMaker);
+
+		/// <summary>
+		/// Commission (maker)
+		/// </summary>
+		public static string CommissionMaker => GetString(CommissionMakerKey);
 	}
 }
