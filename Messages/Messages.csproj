@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>Z:\ss\bin\ss\dbg\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>Z:\ss\bin\ss\rel\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -36,31 +36,31 @@
       <HintPath>..\References\DevExpress.Mvvm.v18.1.dll</HintPath>
     </Reference>
     <Reference Include="Ecng.Collections">
-      <HintPath>..\References\Ecng.Collections.dll</HintPath>
+      <HintPath>z:\ss\bin\ecng\_ref\Ecng.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Ecng.Common">
-      <HintPath>..\References\Ecng.Common.dll</HintPath>
+      <HintPath>z:\ss\bin\ecng\_ref\Ecng.Common.dll</HintPath>
     </Reference>
     <Reference Include="Ecng.ComponentModel">
-      <HintPath>..\References\Ecng.ComponentModel.dll</HintPath>
+      <HintPath>z:\ss\bin\ecng\_ref\Ecng.ComponentModel.dll</HintPath>
     </Reference>
     <Reference Include="Ecng.Interop">
-      <HintPath>..\References\Ecng.Interop.dll</HintPath>
+      <HintPath>z:\ss\bin\ecng\_ref\Ecng.Interop.dll</HintPath>
     </Reference>
     <Reference Include="Ecng.Net">
-      <HintPath>..\References\Ecng.Net.dll</HintPath>
+      <HintPath>z:\ss\bin\ecng\_ref\Ecng.Net.dll</HintPath>
     </Reference>
     <Reference Include="Ecng.Reflection">
-      <HintPath>..\References\Ecng.Reflection.dll</HintPath>
+      <HintPath>z:\ss\bin\ecng\_ref\Ecng.Reflection.dll</HintPath>
     </Reference>
     <Reference Include="Ecng.Serialization">
-      <HintPath>..\References\Ecng.Serialization.dll</HintPath>
+      <HintPath>z:\ss\bin\ecng\_ref\Ecng.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="Ecng.Serialization.FieldFactories">
-      <HintPath>..\References\Ecng.Serialization.FieldFactories.dll</HintPath>
+      <HintPath>z:\ss\bin\ecng\_ref\Ecng.Serialization.FieldFactories.dll</HintPath>
     </Reference>
     <Reference Include="Ecng.Localization">
-      <HintPath>..\References\Ecng.Localization.dll</HintPath>
+      <HintPath>z:\ss\bin\ecng\_ref\Ecng.Localization.dll</HintPath>
     </Reference>
     <Reference Include="MoreLinq">
       <HintPath>..\References\MoreLinq.dll</HintPath>

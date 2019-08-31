@@ -74,6 +74,14 @@ namespace StockSharp.Messages
 			NewOutMessage?.Invoke(message);
 		}
 
+		private event Action StateChanged;
+
+		event Action IMessageChannel.StateChanged
+		{
+			add {}
+			remove {}
+		}
+
 		/// <inheritdoc />
 		public void SendInMessage(Message message)
 		{
