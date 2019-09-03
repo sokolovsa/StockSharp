@@ -73,6 +73,7 @@ namespace SampleChart
 		private bool _isInTimerHandler;
 		private readonly SyncObject _timerLock = new SyncObject();
 		private readonly SynchronizedList<Action> _dataThreadActions = new SynchronizedList<Action>();
+		private readonly CollectionSecurityProvider _securityProvider = new CollectionSecurityProvider();
 
 		private static readonly TimeSpan _realtimeInterval = TimeSpan.FromMilliseconds(1);
 		private static readonly TimeSpan _drawInterval = TimeSpan.FromMilliseconds(100);
@@ -121,6 +122,7 @@ namespace SampleChart
 		private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
 		{
 			Chart.FillIndicators();
+			Chart.SubscribeCandleElement += Chart_OnSubscribeCandleElement;
 			Chart.SubscribeIndicatorElement += Chart_OnSubscribeIndicatorElement;
 			Chart.UnSubscribeElement += Chart_OnUnSubscribeElement;
 			Chart.AnnotationCreated += ChartOnAnnotationCreated;
@@ -131,6 +133,8 @@ namespace SampleChart
 			ConfigManager.RegisterService<IBackupService>(new YandexDiskService());
 
 			HistoryPath.Folder = @"..\..\..\..\Testing\HistoryData\".ToFullPath();
+
+			Chart.SecurityProvider = _securityProvider;
 
 			if (Securities.SelectedItem == null)
 				return;
@@ -153,10 +157,34 @@ namespace SampleChart
 			ApplicationThemeHelper.ApplicationThemeName = theme;
 		}
 
+		private void Chart_OnSubscribeCandleElement(ChartCandleElement el, CandleSeries ser)
+		{
+			_currCandle = null;
+			_historyLoaded = false;
+			_allCandles.Clear();
+			_updatedCandles.Clear();
+			_dataThreadActions.Clear();
+
+			Chart.Reset(new[] {el});
+
+			LoadData(ser);
+		}
+
 		private void Chart_OnSubscribeIndicatorElement(ChartIndicatorElement element, CandleSeries series, IIndicator indicator)
 		{
 			_dataThreadActions.Add(() =>
 			{
+				var oldReset = Chart.DisableIndicatorReset;
+				try
+				{
+					Chart.DisableIndicatorReset = true;
+					indicator.Reset();
+				}
+				finally
+				{
+					Chart.DisableIndicatorReset = oldReset;
+				}
+
 				var chartData = new ChartDrawData();
 
 				foreach (var candle in _allCandles.CachedValues)
@@ -207,11 +235,16 @@ namespace SampleChart
 				_security = new Security
 				{
 					Id = id.ToStringId(),
+					Code = id.SecurityCode,
+					Type = SecurityTypes.Future,
 					PriceStep = id.SecurityCode.StartsWith("RI", StringComparison.InvariantCultureIgnoreCase) ? 10 :
 						id.SecurityCode.Contains("ES") ? 0.25m :
 						0.01m,
 					Board = ExchangeBoard.Associated
 				};
+
+				_securityProvider.Clear();
+				_securityProvider.Add(_security);
 
 				_tradeGenerator = new RandomWalkTradeGenerator(id);
 				_tradeGenerator.Init();
@@ -224,17 +257,7 @@ namespace SampleChart
 
 				_candleElement = new ChartCandleElement { FullTitle = "Candles" };
 				Chart.AddElement(_areaComb, _candleElement, series);
-
-				_currCandle = null;
-				_historyLoaded = false;
-				_allCandles.Clear();
-				_updatedCandles.Clear();
-				_dataThreadActions.Clear();
 			});
-
-			Chart.Reset(new IChartElement[] { _candleElement });
-
-			this.GuiAsync(() => LoadData(series));
 		}
 
 		private void Draw_Click(object sender, RoutedEventArgs e)
