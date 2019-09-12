@@ -74,8 +74,9 @@ namespace SampleChart
 		private readonly SyncObject _timerLock = new SyncObject();
 		private readonly SynchronizedList<Action> _dataThreadActions = new SynchronizedList<Action>();
 		private readonly CollectionSecurityProvider _securityProvider = new CollectionSecurityProvider();
+		private readonly TestMarketDataProvider _testMdProvider = new TestMarketDataProvider();
 
-		private static readonly TimeSpan _realtimeInterval = TimeSpan.FromMilliseconds(1);
+		private static readonly TimeSpan _realtimeInterval = TimeSpan.FromMilliseconds(100);
 		private static readonly TimeSpan _drawInterval = TimeSpan.FromMilliseconds(100);
 
 		private DateTime _lastRealtimeUpdateTime;
@@ -107,6 +108,8 @@ namespace SampleChart
 				CandleType = typeof(TimeFrameCandle),
 				Arg = TimeSpan.FromMinutes(1)
 			};
+
+			ConfigManager.RegisterService<IMarketDataProvider>(_testMdProvider);
 		}
 
 		private void HistoryPath_OnFolderChanged(string path)
@@ -129,6 +132,11 @@ namespace SampleChart
 			Chart.AnnotationModified += ChartOnAnnotationModified;
 			Chart.AnnotationDeleted += ChartOnAnnotationDeleted;
 			Chart.AnnotationSelected += ChartOnAnnotationSelected;
+
+			Chart.RegisterOrder += (area, order) =>
+			{
+				MessageBox.Show($"RegisterOrder: sec={order.Security.Id}, {order.Direction} {order.Volume}@{order.Price}");
+			};
 
 			ConfigManager.RegisterService<IBackupService>(new YandexDiskService());
 
@@ -431,6 +439,9 @@ namespace SampleChart
 
 			if (nextTick != null)
 			{
+				if(nextTick.TradePrice != null)
+					_testMdProvider.UpdateData(_security, nextTick.TradePrice.Value);
+
 				if (_candleTransform.Process(nextTick))
 				{
 					var candles = _candleBuilder.Process(_mdMsg, _currCandle, _candleTransform);
@@ -443,7 +454,7 @@ namespace SampleChart
 				}
 			}
 
-			_lastTime += TimeSpan.FromMilliseconds(RandomGen.GetInt(100, 2000));
+			_lastTime += TimeSpan.FromMilliseconds(RandomGen.GetInt(100, 20000));
 		}
 
 		private void DrawChartElements()
@@ -688,6 +699,75 @@ namespace SampleChart
 				_annotation = null;
 				_annotationData = null;
 			}
+		}
+
+		class TestMarketDataProvider : IMarketDataProvider
+		{
+			public event Action<Security, IEnumerable<KeyValuePair<Level1Fields, object>>, DateTimeOffset, DateTimeOffset> ValuesChanged;
+
+			public void UpdateData(Security sec, decimal price)
+			{
+				var ps = sec.PriceStep ?? 1;
+				var ask = price + RandomGen.GetInt(1, 10) * ps;
+				var bid = price - RandomGen.GetInt(1, 10) * ps;
+
+				var arr = new[]
+				{
+					new KeyValuePair<Level1Fields, object>(Level1Fields.BestBid, new Quote(sec, bid, 1, Sides.Buy)),
+					new KeyValuePair<Level1Fields, object>(Level1Fields.BestAsk, new Quote(sec, ask, 1, Sides.Sell)),
+				};
+
+				var now = DateTimeOffset.Now;
+				ValuesChanged?.Invoke(sec, arr, now, now);
+			}
+
+			#region not implemented
+
+			public event Action<Trade> NewTrade;
+			public event Action<Security> NewSecurity;
+			public event Action<MarketDepth> NewMarketDepth;
+			public event Action<MarketDepth> MarketDepthChanged;
+			public event Action<OrderLogItem> NewOrderLogItem;
+			public event Action<News> NewNews;
+			public event Action<News> NewsChanged;
+			public event Action<Security> SecurityChanged;
+			public event Action<SecurityLookupMessage, IEnumerable<Security>, Exception> LookupSecuritiesResult;
+			public event Action<SecurityLookupMessage, IEnumerable<Security>, IEnumerable<Security>, Exception> LookupSecuritiesResult2;
+			public event Action<BoardLookupMessage, IEnumerable<ExchangeBoard>, Exception> LookupBoardsResult;
+			public event Action<BoardLookupMessage, IEnumerable<ExchangeBoard>, IEnumerable<ExchangeBoard>, Exception> LookupBoardsResult2;
+			public event Action<Security, MarketDataMessage> MarketDataSubscriptionSucceeded;
+			public event Action<Security, MarketDataMessage, Exception> MarketDataSubscriptionFailed;
+			public event Action<Security, MarketDataMessage> MarketDataUnSubscriptionSucceeded;
+			public event Action<Security, MarketDataMessage, Exception> MarketDataUnSubscriptionFailed;
+			public event Action<Security, MarketDataFinishedMessage> MarketDataSubscriptionFinished;
+			public event Action<Security, MarketDataMessage, Exception> MarketDataUnexpectedCancelled;
+			public void LookupSecurities(SecurityLookupMessage criteria) { }
+			public void LookupBoards(BoardLookupMessage criteria) { }
+			public MarketDepth GetFilteredMarketDepth(Security security) => null;
+			public IEnumerable<Level1Fields> GetLevel1Fields(Security security) { yield break; }
+			public object GetSecurityValue(Security security, Level1Fields field) => null;
+			public MarketDepth GetMarketDepth(Security security) => null;
+
+			public void SubscribeMarketData(Security security, MarketDataMessage message) { }
+			public void UnSubscribeMarketData(Security security, MarketDataMessage message) { }
+			public void SubscribeMarketData(MarketDataMessage message) { }
+			public void UnSubscribeMarketData(MarketDataMessage message) { }
+			public void RegisterMarketDepth(Security security, DateTimeOffset? @from = null, DateTimeOffset? to = null, long? count = null, MarketDataBuildModes buildMode = MarketDataBuildModes.LoadAndBuild, MarketDataTypes? buildFrom = null, int? maxDepth = null) { }
+			public void UnRegisterMarketDepth(Security security) { }
+			public void RegisterFilteredMarketDepth(Security security) { }
+			public void UnRegisterFilteredMarketDepth(Security security) { }
+			public void RegisterTrades(Security security, DateTimeOffset? @from = null, DateTimeOffset? to = null, long? count = null, MarketDataBuildModes buildMode = MarketDataBuildModes.LoadAndBuild, MarketDataTypes? buildFrom = null) { }
+			public void UnRegisterTrades(Security security) { }
+			public void RegisterOrderLog(Security security, DateTimeOffset? @from = null, DateTimeOffset? to = null, long? count = null) { }
+			public void UnRegisterOrderLog(Security security) { }
+			public void RegisterNews() { }
+			public void UnRegisterNews() { }
+			public void SubscribeBoard(ExchangeBoard board) { }
+			public void UnSubscribeBoard(ExchangeBoard board) { }
+			public void RegisterSecurity(Security security, DateTimeOffset? @from = null, DateTimeOffset? to = null, long? count = null, MarketDataBuildModes buildMode = MarketDataBuildModes.LoadAndBuild, MarketDataTypes? buildFrom = null) { }
+			public void UnRegisterSecurity(Security security) { }
+
+			#endregion
 		}
 	}
 }
