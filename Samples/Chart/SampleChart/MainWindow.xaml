@@ -6,7 +6,7 @@
 		xmlns:loc="clr-namespace:StockSharp.Localization;assembly=StockSharp.Localization"
 		xmlns:xaml="clr-namespace:Ecng.Xaml;assembly=Ecng.Xaml"
 		xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-		Title="{x:Static loc:LocalizedStrings.XamlStr540}" Height="500" Width="1000">
+		Title="{x:Static loc:LocalizedStrings.XamlStr540}" Height="900" Width="1300">
 	<xctk:BusyIndicator x:Name="BusyIndicator">
 		<Grid>
 			<Grid.RowDefinitions>

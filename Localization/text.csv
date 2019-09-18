@@ -1,4 +1,9 @@
-﻿ErrorChangingGroupName;Unable to change group name of axis while it is attached to a chart area.;Невозможно изменить имя группы у оси, добавленной в область графика.
+﻿DaysLetter;d;д
+HoursLetter;h;ч
+MinutesLetter;m;м
+SecondsLetter;s;с
+Ruler;Ruler;Линейка
+ErrorChangingGroupName;Unable to change group name of axis while it is attached to a chart area.;Невозможно изменить имя группы у оси, добавленной в область графика.
 AxisIsNotSet;Element axis is not set.;Ось элемента не задана.
 ErrorRemovingDefaultAxis;Unable to remove default axis.;Нельзя удалить ось по умолчанию.
 SourceValues;Source values;Исходные значения

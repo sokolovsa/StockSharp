@@ -18,6 +18,56 @@ namespace StockSharp.Localization
 	partial class LocalizedStrings
 	{
 		/// <summary>
+		/// Days letter.
+		/// </summary>
+		public const string DaysLetterKey = nameof(DaysLetter);
+
+		/// <summary>
+		/// Days letter.
+		/// </summary>
+		public static string DaysLetter => GetString(DaysLetterKey);
+
+		/// <summary>
+		/// Hours letter.
+		/// </summary>
+		public const string HoursLetterKey = nameof(HoursLetter);
+
+		/// <summary>
+		/// Hours letter.
+		/// </summary>
+		public static string HoursLetter => GetString(HoursLetterKey);
+
+		/// <summary>
+		/// Minutes letter.
+		/// </summary>
+		public const string MinutesLetterKey = nameof(MinutesLetter);
+
+		/// <summary>
+		/// Minutes letter.
+		/// </summary>
+		public static string MinutesLetter => GetString(MinutesLetterKey);
+
+		/// <summary>
+		/// Seconds letter.
+		/// </summary>
+		public const string SecondsLetterKey = nameof(SecondsLetter);
+
+		/// <summary>
+		/// Seconds letter.
+		/// </summary>
+		public static string SecondsLetter => GetString(SecondsLetterKey);
+
+		/// <summary>
+		/// Ruler.
+		/// </summary>
+		public const string RulerKey = nameof(Ruler);
+
+		/// <summary>
+		/// Ruler.
+		/// </summary>
+		public static string Ruler => GetString(RulerKey);
+
+		/// <summary>
 		/// Unable to change group name of axis while it is attached to a chart area.
 		/// </summary>
 		public const string ErrorChangingGroupNameKey = nameof(ErrorChangingGroupName);
