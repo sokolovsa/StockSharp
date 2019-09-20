@@ -89,6 +89,10 @@ namespace SampleChart
 		private ChartDrawData.AnnotationData _annotationData;
 		private int _annotationId;
 
+		private DateTimeOffset _lastCandleDrawTime;
+		private bool _drawWithColor;
+		private Color _candleDrawColor;
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -457,6 +461,8 @@ namespace SampleChart
 			_lastTime += TimeSpan.FromMilliseconds(RandomGen.GetInt(100, 20000));
 		}
 
+		private static Color GetRandomColor() => Color.FromRgb((byte)RandomGen.GetInt(0, 255), (byte)RandomGen.GetInt(0, 255), (byte)RandomGen.GetInt(0, 255));
+
 		private void DrawChartElements()
 		{
 			var messages = _updatedCandles.SyncGet(uc => uc.CopyAndClear());
@@ -495,8 +501,15 @@ namespace SampleChart
 				if (chartData == null)
 					chartData = new ChartDrawData();
 
+				if (_lastCandleDrawTime != candle.OpenTime)
+				{
+					_lastCandleDrawTime = candle.OpenTime;
+					_candleDrawColor = GetRandomColor();
+				}
+
 				var chartGroup = chartData.Group(candle.OpenTime);
 				chartGroup.Add(_candleElement, candle);
+				chartGroup.Add(_candleElement, _drawWithColor ? _candleDrawColor : (Color?) null);
 
 				foreach (var pair in _indicators.CachedPairs)
 				{
@@ -540,6 +553,23 @@ namespace SampleChart
 
 			// refresh prev painted elements
 			Chart.Draw(new ChartDrawData());
+		}
+
+		private void CustomColors2_Changed(object sender, RoutedEventArgs e)
+		{
+			var colored = CustomColors2.IsChecked == true;
+			_drawWithColor = colored;
+			_dataThreadActions.Add(() =>
+			{
+				if(_allCandles.IsEmpty())
+					return;
+
+				var dd = new ChartDrawData();
+				foreach (var c in _allCandles)
+					dd.Group(c.Value.OpenTime).Add(_candleElement, colored ? GetRandomColor() : (Color?) null);
+
+				Chart.Draw(dd);
+			});
 		}
 
 		private void IsRealtime_OnChecked(object sender, RoutedEventArgs e)
