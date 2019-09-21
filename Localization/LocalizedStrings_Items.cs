@@ -18,6 +18,16 @@ namespace StockSharp.Localization
 	partial class LocalizedStrings
 	{
 		/// <summary>
+		/// Use alternative icon.
+		/// </summary>
+		public const string UseAlternativeIconKey = nameof(UseAlternativeIcon);
+
+		/// <summary>
+		/// Use alternative icon.
+		/// </summary>
+		public static string UseAlternativeIcon => GetString(UseAlternativeIconKey);
+
+		/// <summary>
 		/// Days letter.
 		/// </summary>
 		public const string DaysLetterKey = nameof(DaysLetter);
