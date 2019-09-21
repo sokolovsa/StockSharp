@@ -107,6 +107,7 @@ namespace SampleHistoryTesting
 		private DateTime _startEmulationTime;
 		private ChartCandleElement _candlesElem;
 		private ChartTradeElement _tradesElem;
+		private ChartOrderElement _ordersElem;
 		private ChartIndicatorElement _shortElem;
 		private SimpleMovingAverage _shortMa;
 		private ChartIndicatorElement _longElem;
@@ -397,6 +398,7 @@ namespace SampleHistoryTesting
 								// It is terned off, and price should go through limit order price level
 								// (more "severe" test mode)
 								MatchOnTouch = false,
+								Failing = 50d
 							}
 						}
 					},
@@ -458,7 +460,7 @@ namespace SampleHistoryTesting
 				chart.AddElement(_area, _longElem);
 
 				// create strategy based on 80 5-min и 10 5-min
-				var strategy = new SmaStrategy(chart, _candlesElem, _tradesElem, _shortMa, _shortElem, _longMa, _longElem, series)
+				var strategy = new SmaStrategy(chart, _candlesElem, _ordersElem, _tradesElem, _shortMa, _shortElem, _longMa, _longElem, series)
 				{
 					Volume = 1,
 					Portfolio = portfolio,
@@ -724,6 +726,9 @@ namespace SampleHistoryTesting
 
 			_tradesElem = new ChartTradeElement { FullTitle = LocalizedStrings.Str985 };
 			chart.AddElement(_area, _tradesElem);
+
+			_ordersElem = new ChartOrderElement { FullTitle = LocalizedStrings.Orders };
+			chart.AddElement(_area, _ordersElem);
 		}
 
 		private void SetIsEnabled(bool canStart, bool canSuspend, bool canStop)

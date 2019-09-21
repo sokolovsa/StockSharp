@@ -18,14 +18,64 @@ namespace StockSharp.Localization
 	partial class LocalizedStrings
 	{
 		/// <summary>
-		/// Use alternative icon.
+		/// Order display filter.
 		/// </summary>
-		public const string UseAlternativeIconKey = nameof(UseAlternativeIcon);
+		public const string  OrdersDisplayFilterKey = nameof(OrdersDisplayFilter);
+
+		/// <summary>
+		/// Order display filter.
+		/// </summary>
+		public static string OrdersDisplayFilter => GetString(OrdersDisplayFilterKey);
+
+		/// <summary>
+		/// All orders
+		/// </summary>
+		public const string  AllOrdersKey = nameof(AllOrders);
+
+		/// <summary>
+		/// All orders
+		/// </summary>
+		public static string AllOrders => GetString(AllOrdersKey);
+
+		/// <summary>
+		/// Orders with errors
+		/// </summary>
+		public const string  ErrorOrdersOnlyKey = nameof(ErrorOrdersOnly);
+
+		/// <summary>
+		/// Orders with errors
+		/// </summary>
+		public static string ErrorOrdersOnly => GetString(ErrorOrdersOnlyKey);
+
+		/// <summary>
+		/// Orders with no errors
+		/// </summary>
+		public const string  NoErrorOrdersOnlyKey = nameof(NoErrorOrdersOnly);
+		
+		/// <summary>
+		/// Orders with no errors
+		/// </summary>
+		public static string NoErrorOrdersOnly => GetString(NoErrorOrdersOnlyKey);
+
+		/// <summary>
+		/// Order errors color
+		/// </summary>
+		public const string TransactionErrorColorKey = nameof(TransactionErrorColor);
+
+		/// <summary>
+		/// Order errors color
+		/// </summary>
+		public static string TransactionErrorColor => GetString(TransactionErrorColorKey);
 
 		/// <summary>
 		/// Use alternative icon.
 		/// </summary>
-		public static string UseAlternativeIcon => GetString(UseAlternativeIconKey);
+		public const string UseAltIconKey = nameof(UseAltIcon);
+
+		/// <summary>
+		/// Use alternative icon.
+		/// </summary>
+		public static string UseAltIcon => GetString(UseAltIconKey);
 
 		/// <summary>
 		/// Days letter.

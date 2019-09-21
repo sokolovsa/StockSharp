@@ -13,8 +13,10 @@ Created: 2015, 11, 11, 2:32 PM
 Copyright 2010 by StockSharp, LLC
 *******************************************************************************************/
 #endregion S# License
+
 namespace SampleHistoryTesting
 {
+	using System;
 	using System.Linq;
 	using System.Collections.Generic;
 
@@ -35,19 +37,22 @@ namespace SampleHistoryTesting
 		private readonly IChart _chart;
 		private readonly ChartCandleElement _candlesElem;
 		private readonly ChartTradeElement _tradesElem;
+		private readonly ChartOrderElement _ordersElem;
 		private readonly ChartIndicatorElement _shortElem;
 		private readonly ChartIndicatorElement _longElem;
 		private readonly List<MyTrade> _myTrades = new List<MyTrade>();
+		private readonly List<Tuple<Order, OrderFail>> _myOrders = new List<Tuple<Order, OrderFail>>();
 		private readonly CandleSeries _series;
 		private bool _isShortLessThenLong;
 
-		public SmaStrategy(IChart chart, ChartCandleElement candlesElem, ChartTradeElement tradesElem, 
+		public SmaStrategy(IChart chart, ChartCandleElement candlesElem, ChartOrderElement ordersElem, ChartTradeElement tradesElem, 
 			SimpleMovingAverage shortMa, ChartIndicatorElement shortElem,
 			SimpleMovingAverage longMa, ChartIndicatorElement longElem,
 			CandleSeries series)
 		{
 			_chart = chart;
 			_candlesElem = candlesElem;
+			_ordersElem = ordersElem;
 			_tradesElem = tradesElem;
 			_shortElem = shortElem;
 			_longElem = longElem;
@@ -72,6 +77,13 @@ namespace SampleHistoryTesting
 				.WhenNewMyTrade()
 				.Do(trade => _myTrades.Add(trade))
 				.Apply(this);
+			
+			this
+				.WhenOrderRegistered()
+				.Do(o => _myOrders.Add(Tuple.Create(o, (OrderFail)null)))
+				.Apply(this);
+
+			OrderRegisterFailed += fail => _myOrders.Add(Tuple.Create((Order)null, fail));
 
 			// store current values for short and long
 			_isShortLessThenLong = ShortSma.GetCurrentValue() < LongSma.GetCurrentValue();
@@ -127,6 +139,12 @@ namespace SampleHistoryTesting
 			var trade = _myTrades.FirstOrDefault();
 			_myTrades.Clear();
 
+			var ordTuple = _myOrders.FirstOrDefault();
+			_myOrders.Clear();
+
+			var order = ordTuple?.Item1 ?? ordTuple?.Item2?.Order;
+			var orderErrorMessage = ordTuple?.Item2?.Error.Message;
+
 			var data = new ChartDrawData();
 
 			data
@@ -134,7 +152,8 @@ namespace SampleHistoryTesting
 					.Add(_candlesElem, candle)
 					.Add(_shortElem, shortValue)
 					.Add(_longElem, longValue)
-					.Add(_tradesElem, trade);
+					.Add(_tradesElem, trade)
+					.Add(_ordersElem, order, orderErrorMessage);
 
 			_chart.Draw(data);
 		}

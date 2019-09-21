@@ -1,4 +1,9 @@
-﻿UseAltIcon;Use alternative icon.;Использовать альтернативные иконки.
+﻿OrdersDisplayFilter;Order display filter;Фильтр отображения 
+AllOrders;All orders;Все заявки
+ErrorOrdersOnly;Orders with errors;Заявки с ошибками
+NoErrorOrdersOnly;Orders with no errors;Заявки без ошибок
+TransactionErrorColor;Order errors color;Цвет заявок с ошибками
+UseAltIcon;Use alternative icon;Использовать альтернативные иконки
 DaysLetter;d;д
 HoursLetter;h;ч
 MinutesLetter;m;м
