@@ -18,6 +18,16 @@ namespace StockSharp.Localization
 	partial class LocalizedStrings
 	{
 		/// <summary>
+		/// Draw size
+		/// </summary>
+		public const string  DrawSizeKey = nameof(DrawSize);
+
+		/// <summary>
+		/// Draw size
+		/// </summary>
+		public static string DrawSize => GetString(DrawSizeKey);
+
+		/// <summary>
 		/// Order display filter.
 		/// </summary>
 		public const string  OrdersDisplayFilterKey = nameof(OrdersDisplayFilter);

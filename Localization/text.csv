@@ -1,4 +1,5 @@
-﻿OrdersDisplayFilter;Order display filter;Фильтр отображения 
+﻿DrawSize;Draw size;Размер отрисовки
+OrdersDisplayFilter;Order display filter;Фильтр отображения 
 AllOrders;All orders;Все заявки
 ErrorOrdersOnly;Orders with errors;Заявки с ошибками
 NoErrorOrdersOnly;Orders with no errors;Заявки без ошибок
