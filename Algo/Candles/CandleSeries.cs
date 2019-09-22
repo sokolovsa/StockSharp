@@ -31,7 +31,7 @@ namespace StockSharp.Algo.Candles
 	/// <summary>
 	/// Candles series.
 	/// </summary>
-	public class CandleSeries : NotifiableObject, IPersistable
+	public class CandleSeries : NotifiableObject, IPersistable, ICloneable<CandleSeries>
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CandleSeries"/>.
@@ -237,6 +237,42 @@ namespace StockSharp.Algo.Candles
 		public override string ToString()
 		{
 			return CandleType?.Name + "_" + Security + "_" + TraderHelper.CandleArgToFolderName(Arg);
+		}
+
+		/// <summary>
+		/// Create a copy of <see cref="CandleSeries"/>.
+		/// </summary>
+		/// <returns>Copy.</returns>
+		public CandleSeries Clone()
+		{
+			return new CandleSeries
+			{
+				CandleType                         = CandleType,
+				Security                           = Security,
+				Arg                                = Arg,
+				IsCalcVolumeProfile                = IsCalcVolumeProfile,
+				AllowBuildFromSmallerTimeFrame     = AllowBuildFromSmallerTimeFrame,
+				BuildCandlesField                  = BuildCandlesField,
+				BuildCandlesFrom                   = BuildCandlesFrom,
+				BuildCandlesMode                   = BuildCandlesMode,
+				Count                              = Count,
+				From                               = From,
+				To                                 = To,
+				IsFinished                         = IsFinished,
+				IsRegularTradingHours              = IsRegularTradingHours,
+				WorkingTime                        = WorkingTime,
+			};
+		}
+
+		/// <summary>
+		/// Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <returns>
+		/// A new object that is a copy of this instance.
+		/// </returns>
+		object ICloneable.Clone()
+		{
+			return Clone();
 		}
 
 		/// <summary>
